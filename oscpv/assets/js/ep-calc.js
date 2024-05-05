@@ -12,23 +12,23 @@ jQuery.extend(jQuery.fn.pickadate.defaults, {
   format: 'dd.mm.yyyy',
   formatSubmit: 'dd.mm.yyyy'
 });
-var lang = $('.js-lang').data('lang');
-var $globalDocumentTypeSelect = 'DRIVING_LICENSE',
-  globalEpolis = false,
-  globalCityName = '',
-  globalTariffId = null,
-  globalCityId = null,
-  globalVehicleDataFromResponse = {},
-  globalVehicleNumberFlag = false,
-  globalFranchiseChangedFlag = false,
-  filesToUpload = [];
-if (lang == "UA") {
+let lang = $('.js-lang').data('lang');
+let $globalDocumentTypeSelect = 'DRIVING_LICENSE',
+    globalEpolis = false,
+    globalCityName = '',
+    globalTariffId = null,
+    globalCityId = null,
+    globalVehicleDataFromResponse = {},
+    globalVehicleNumberFlag = false,
+    globalFranchiseChangedFlag = false;
+const filesToUpload = [];
+if (lang === "UA") {
   lang = '/ua';
 }
 else {
   lang = '';
 }
-var map = {
+const map = {
   'q': 'й',
   'w': 'ц',
   'e': 'у',
@@ -101,7 +101,7 @@ $.fn.setCursorPosition = function (pos) {
       elem.setSelectionRange(pos, pos);
     }
     else if (elem.createTextRange) {
-      var range = elem.createTextRange();
+      const range = elem.createTextRange();
       range.collapse(true);
       range.moveEnd('character', pos);
       range.moveStart('character', pos);
@@ -111,14 +111,13 @@ $.fn.setCursorPosition = function (pos) {
   return this;
 };
 
-var
-  $window = $(window),
-  BREAKPOINT_XS = 767 // mobile devices breakpoint
+const $window = $(window),
+    BREAKPOINT_XS = 767 // mobile devices breakpoint
 ;
 
 $(document).ready(function () {
   // data-href replace module
-  var dataHref = function () {
+  const dataHref = function () {
     $('a[data-href]').each(function () {
       $(this).attr('href', $(this).attr('data-href'));
       $(this).removeAttr('data-href');
@@ -144,8 +143,8 @@ $(document).ready(function () {
 
 
   // header module
-  var headerModule = (function () {
-    var obj = {}; // module returned object
+  const headerModule = (function () {
+    const obj = {}; // module returned object
 
     // menu hiding/appearance
     obj.$header = $("#headerWrapper"); // header
@@ -159,17 +158,16 @@ $(document).ready(function () {
       if (obj.$mainMenu.hasClass("opened")) {
         obj.$closeIcon.fadeOut(1);
         obj.$openIcon.fadeIn(1);
-      }
-      else {
+      } else {
         obj.$openIcon.fadeOut(1);
         obj.$closeIcon.fadeIn(1);
       }
     };
     // menu open
     obj.openMenu = function () {
-      var $menuList = obj.$mainMenu.children("ul"),
-        $menuCallback = obj.$mainMenu.children(".js-btn_callback"),
-        height = $menuList.outerHeight() + ($menuCallback.is(":visible") ? $menuCallback.outerHeight() : 0);
+      const $menuList = obj.$mainMenu.children("ul"),
+          $menuCallback = obj.$mainMenu.children(".js-btn_callback"),
+          height = $menuList.outerHeight() + ($menuCallback.is(":visible") ? $menuCallback.outerHeight() : 0);
 
       obj.$mainMenu.css("top", "100%");
       obj.$mainMenu.animate({
@@ -190,13 +188,13 @@ $(document).ready(function () {
     };
     // menu close after some scroll
     obj.closeAfterScroll = new function () {
-      var o = this,
-        startCoor;
+      const o = this;
+      let startCoor;
 
       o.SCROLL_VAL_PX = 100; // close after 100px scroll
 
       o.menuScrollHandler = function () {
-        var currentCoor = $(document).scrollTop();
+        const currentCoor = $(document).scrollTop();
 
         if (Math.abs(currentCoor - startCoor) >= o.SCROLL_VAL_PX) {
           obj.closeMenu();
@@ -214,10 +212,10 @@ $(document).ready(function () {
       obj.$menuBtn.on("click", function () {
         if (obj.$mainMenu.hasClass("opened")) {
           obj.closeMenu();
-        }
-        else {
+        } else {
           obj.openMenu();
-        };
+        }
+
         if (obj.$mainMenu.hasClass("opened")) {
           obj.closeAfterScroll.init();
         }
@@ -241,10 +239,10 @@ $(document).ready(function () {
   headerModule.init();
 
   // Global variables
-  var $containerAjax = $(".js-ajax_calculator");
+  const $containerAjax = $(".js-ajax_calculator");
 
   // Functions for the calc-choose-buy block AJAX loads and js-functional inits on them
-  var hideContainerAjax = function ($containerAjax) {
+  const hideContainerAjax = function ($containerAjax) {
     $("#toTop").trigger("click"); // прокручуємо сторінку нагору
     $containerAjax.animate({
       opacity: 0,
@@ -253,7 +251,7 @@ $(document).ready(function () {
       queue: "ajax",
     });
   };
-  var showContainerAjax = function ($containerAjax) {
+  const showContainerAjax = function ($containerAjax) {
     $containerAjax.animate({
       opacity: 1,
     }, {
@@ -263,23 +261,22 @@ $(document).ready(function () {
   };
 
   // OSCPV propositions
-  var showPropositions = function ($containerAjax) { // ф-я для підвантаження пропозицій
+  const showPropositions = function ($containerAjax) { // ф-я для підвантаження пропозицій
     hideContainerAjax($containerAjax);
 
-    var
-      activeStep = $('.b-choose-step_active').attr('for'),
-      type = activeStep === 'params_vehicle' ? $("#vehicleForm input[name='type']:checked").val() : $("#numberVehicleForm input[name='type']:checked").val(),
-      franshiza = activeStep === 'params_vehicle' ? $("#vehicleForm").find("input[name='franshiza']").val() : $("#numberVehicleForm").find("input[name='franshiza']").val(),
-      priv = activeStep === 'params_vehicle' ? ($("#vehicleForm [name='priv']").is(':checked') ? 1 : 0) : ($("#numberVehicleForm [name='n_priv']").is(':checked') ? 1 : 0),
-      city = activeStep === 'params_vehicle' ? $("#vehicleForm #cityId").val() : $("#numberVehicleForm #regCityIdNumberForm").val(),
-      cityName = activeStep === 'params_vehicle' ? $("#vehicleForm #regCity").val() : $("#numberVehicleForm #regCityNumberForm").val(),
-      number = activeStep === 'params_vehicle' ? '' : $("#numberVehicleForm #g_number_vehicle__input").val(),
-      registeredAbroad = activeStep === 'params_vehicle' ? $("#vehicleForm #registeredAbroad").is(":checked") : false,
-      selectedVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm .b-vehicle_active").find('.b-vehicle__title').text() : false,
-      selectedEngineText = activeStep === 'params_vehicle' ? $("#vehicleForm").find('label[for="' + $("#vehicleForm input[name='type']:checked").attr('id') + '"]').text() : false,
-      mobileVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm li[data-index].selected").text().split(',') : false;
-      registeredAbroad ? registeredAbroad = 1 : 0;
-      number !== '' ? globalVehicleNumberFlag = true : false;
+    const activeStep = $('.b-choose-step_active').attr('for'),
+        type = activeStep === 'params_vehicle' ? $("#vehicleForm input[name='type']:checked").val() : $("#numberVehicleForm input[name='type']:checked").val(),
+        franshiza = activeStep === 'params_vehicle' ? $("#vehicleForm").find("input[name='franshiza']").val() : $("#numberVehicleForm").find("input[name='franshiza']").val(),
+        priv = activeStep === 'params_vehicle' ? ($("#vehicleForm [name='priv']").is(':checked') ? 1 : 0) : ($("#numberVehicleForm [name='n_priv']").is(':checked') ? 1 : 0),
+        city = activeStep === 'params_vehicle' ? $("#vehicleForm #cityId").val() : $("#numberVehicleForm #regCityIdNumberForm").val(),
+        cityName = activeStep === 'params_vehicle' ? $("#vehicleForm #regCity").val() : $("#numberVehicleForm #regCityNumberForm").val(),
+        number = activeStep === 'params_vehicle' ? '' : $("#numberVehicleForm #g_number_vehicle__input").val();
+    let registeredAbroad = activeStep === 'params_vehicle' ? $("#vehicleForm #registeredAbroad").is(":checked") : false;
+    const selectedVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm .b-vehicle_active").find('.b-vehicle__title').text() : false,
+        selectedEngineText = activeStep === 'params_vehicle' ? $("#vehicleForm").find('label[for="' + $("#vehicleForm input[name='type']:checked").attr('id') + '"]').text() : false,
+        mobileVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm li[data-index].selected").text().split(',') : false;
+    registeredAbroad ? registeredAbroad = 1 : 0;
+    number !== '' ? globalVehicleNumberFlag = true : false;
     globalType = type;
     globalFranshiza = franshiza;
     globalPriv = priv;
@@ -289,107 +286,105 @@ $(document).ready(function () {
     $containerAjax.queue("ajax", function () {
 
       $.ajax({
-          type: "get",
-          data: {
-            type: type,
-            franshiza: franshiza,
-            priv: priv,
-            city: city,
-            cityName: cityName,
-            number: number,
-            registeredAbroad: registeredAbroad,
-            selectedVehicleText: selectedVehicleText,
-            selectedEngineText: selectedEngineText,
-          },
-          beforeSend: function () {
-            $('button[type="submit"] > .fa').addClass('fa-spinner fa-spin');
-          },
-          url: lang + "/oscpv/get-tariff",
-          error: function () {
+        type: "get",
+        data: {
+          type: type,
+          franshiza: franshiza,
+          priv: priv,
+          city: city,
+          cityName: cityName,
+          number: number,
+          registeredAbroad: registeredAbroad,
+          selectedVehicleText: selectedVehicleText,
+          selectedEngineText: selectedEngineText,
+        },
+        beforeSend: function () {
+          $('button[type="submit"] > .fa').addClass('fa-spinner fa-spin');
+        },
+        url: lang + "/oscpv/get-tariff",
+        error: function () {
+          // if not found vehicle by number
+          switchTabsForm();
+          console.log('error');
+        },
+        success: function (response) {
+          dataLayer.push({
+            'event': 'GAevent',
+            'eventCategory': 'OscpvChoise',
+            'eventAction': 'buttonClick'
+          });
+          if (response.status === 'error') {
             // if not found vehicle by number
             switchTabsForm();
-            console.log('error');
-          },
-          success: function (response) {
+          } else {
             dataLayer.push({
-              'event': 'GAevent',
-              'eventCategory': 'OscpvChoise',
-              'eventAction': 'buttonClick'
+              'event': 'po_parametram_avto',
+              'eventCategory': 'Oscpv'
             });
-            if (response.status === 'error') {
-              // if not found vehicle by number
-              switchTabsForm();
-            }
-            else {
-              dataLayer.push({
-                'event': 'po_parametram_avto',
-                'eventCategory': 'Oscpv'
-              });
-              $containerAjax.html(response);
-              propositionsInit($containerAjax);
-            }
-          },
-          complete: function () {
-            $('button[type="submit"] > .fa').removeClass('fa-spinner fa-spin');
-            showContainerAjax($containerAjax);
-            $containerAjax.dequeue("ajax");
+            $containerAjax.html(response);
+            propositionsInit($containerAjax);
           }
-        })
-        .done(function () {
-          if (globalVehicleNumberFlag) {
-            $('html, body').animate({
-			  scrollTop: $('.vehicle-info-wrapper').offset().top
-            }, 500);
-			$('.b-calculator_propos').css('display', 'none');
-            $('#notMyVehicle').on('click', function () {
-			  document.getElementById("g_number_vehicle__input").focus();
-              $('.vehicle-info-wrapper').css('display', 'none');
+        },
+        complete: function () {
+          $('button[type="submit"] > .fa').removeClass('fa-spinner fa-spin');
+          showContainerAjax($containerAjax);
+          $containerAjax.dequeue("ajax");
+        }
+      })
+          .done(function () {
+            if (globalVehicleNumberFlag) {
+              $('html, body').animate({
+                scrollTop: $('.vehicle-info-wrapper').offset().top
+              }, 500);
               $('.b-calculator_propos').css('display', 'none');
-            });
-            $('#toParams').on('click', function () {
+              $('#notMyVehicle').on('click', function () {
+                document.getElementById("g_number_vehicle__input").focus();
+                $('.vehicle-info-wrapper').css('display', 'none');
+                $('.b-calculator_propos').css('display', 'none');
+              });
+              $('#toParams').on('click', function () {
+                $('.vehicle-info-wrapper').css('display', 'none');
+                switchTabsForm();
+              });
+              $('#toPropos').on('click', function () {
+                $('.vehicle-info-wrapper').css('display', 'none');
+                $('.b-calculator_propos').css('display', 'block');
+                $('html, body').animate({
+                  scrollTop: $('.b-calculator_propos').offset().top - 80
+                }, 500);
+              });
+              $('#toCont').on('click', function () {
+                $('.vehicle-info-wrapper').css('display', 'none');
+                $('.b-calculator_propos').css('display', 'block');
+                $('html, body').animate({
+                  scrollTop: $('.b-calculator_propos').offset().top - 80
+                }, 500);
+              });
+            } else {
               $('.vehicle-info-wrapper').css('display', 'none');
-              switchTabsForm();
-            });
-            $('#toPropos').on('click', function () {
-              $('.vehicle-info-wrapper').css('display', 'none');
-              $('.b-calculator_propos').css('display', 'block');
-			  $('html, body').animate({
-			    scrollTop: $('.b-calculator_propos').offset().top - 80
-              }, 500);
-            });
-            $('#toCont').on('click', function () {
-              $('.vehicle-info-wrapper').css('display', 'none');
-              $('.b-calculator_propos').css('display', 'block');
-			  $('html, body').animate({
-			    scrollTop: $('.b-calculator_propos').offset().top - 80
-              }, 500);
-            });
-          }
-          else {
-            $('.vehicle-info-wrapper').css('display', 'none');
-          }
-        });
+            }
+          });
     });
     $containerAjax.dequeue("ajax"); // запустимо чергу
   };
 
   // OSCPV propositions
-  var showPropositionsEpolis = function ($containerAjax) { // ф-я для підвантаження пропозицій
+  const showPropositionsEpolis = function ($containerAjax) { // ф-я для підвантаження пропозицій
     hideContainerAjax($containerAjax);
 
-    var activeStep = $('.b-choose-step_active').attr('for'),
-      type = activeStep === 'params_vehicle' ? $("#vehicleForm input[name='type']:checked").val() : $("#numberVehicleForm input[name='type']:checked").val(),
-      franshiza = activeStep === 'params_vehicle' ? $("#vehicleForm").find("input[name='franshiza']").val() : $("#numberVehicleForm").find("input[name='franshiza']").val(),
-      priv = activeStep === 'params_vehicle' ? ($("#vehicleForm [name='priv']").is(':checked') ? 1 : 0) : ($("#numberVehicleForm [name='n_priv']").is(':checked') ? 1 : 0),
-      cityName = globalCityName = activeStep === 'params_vehicle' ? $("#vehicleForm #regCity").val() : $("#numberVehicleForm #regCityNumberForm").val(),
-      city = activeStep === 'params_vehicle' ? $("#vehicleForm #cityId").val() : $("#numberVehicleForm #regCityIdNumberForm").val(),
-      zone = activeStep === 'params_vehicle' ? $("#vehicleForm #zoneId").val() : $("#vehicleForm #zoneIdNumberForm").val(),
-      epolis = activeStep === 'params_vehicle' ? $("#vehicleForm #epolisVehicleParams").is(":checked") : $("#numberVehicleForm #epolis").is(":checked"),
-      limit = activeStep === 'params_vehicle' ? $("#vehicleForm #upLimitVehicleParams").is(":checked") : $("#numberVehicleForm #upLimit").is(":checked"),
-      number = activeStep === 'params_vehicle' ? '' : $("#numberVehicleForm #g_number_vehicle__input").val(),
-      selectedVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm .b-vehicle_active").find('.b-vehicle__title').text() : false,
-      selectedEngineText = activeStep === 'params_vehicle' ? $("#vehicleForm").find('label[for="' + $("#vehicleForm input[name='type']:checked").attr('id') + '"]').text() : false,
-      mobileVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm li[data-index].selected").text().split(',') : false;
+    const activeStep = $('.b-choose-step_active').attr('for'),
+        type = activeStep === 'params_vehicle' ? $("#vehicleForm input[name='type']:checked").val() : $("#numberVehicleForm input[name='type']:checked").val(),
+        franshiza = activeStep === 'params_vehicle' ? $("#vehicleForm").find("input[name='franshiza']").val() : $("#numberVehicleForm").find("input[name='franshiza']").val(),
+        priv = activeStep === 'params_vehicle' ? ($("#vehicleForm [name='priv']").is(':checked') ? 1 : 0) : ($("#numberVehicleForm [name='n_priv']").is(':checked') ? 1 : 0),
+        cityName = globalCityName = activeStep === 'params_vehicle' ? $("#vehicleForm #regCity").val() : $("#numberVehicleForm #regCityNumberForm").val(),
+        city = activeStep === 'params_vehicle' ? $("#vehicleForm #cityId").val() : $("#numberVehicleForm #regCityIdNumberForm").val(),
+        zone = activeStep === 'params_vehicle' ? $("#vehicleForm #zoneId").val() : $("#vehicleForm #zoneIdNumberForm").val(),
+        epolis = activeStep === 'params_vehicle' ? $("#vehicleForm #epolisVehicleParams").is(":checked") : $("#numberVehicleForm #epolis").is(":checked"),
+        limit = activeStep === 'params_vehicle' ? $("#vehicleForm #upLimitVehicleParams").is(":checked") : $("#numberVehicleForm #upLimit").is(":checked"),
+        number = activeStep === 'params_vehicle' ? '' : $("#numberVehicleForm #g_number_vehicle__input").val();
+    let selectedVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm .b-vehicle_active").find('.b-vehicle__title').text() : false,
+        selectedEngineText = activeStep === 'params_vehicle' ? $("#vehicleForm").find('label[for="' + $("#vehicleForm input[name='type']:checked").attr('id') + '"]').text() : false;
+    const mobileVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm li[data-index].selected").text().split(',') : false;
     globalEpolis = epolis;
     globalCityId = city;
 
@@ -401,87 +396,86 @@ $(document).ready(function () {
     $containerAjax.queue("ajax", function () {
 
       $.ajax({
-          type: "post",
-          data: {
-            type: type,
-            franchise: franshiza,
-            priv: priv,
-            city: city,
-            cityName: cityName,
-            zone: zone,
-            number: number,
-            epolis: epolis,
-            limit: limit,
-            selectedVehicleText: selectedVehicleText,
-            selectedEngineText: selectedEngineText
-          },
-          url: lang + "/ewa/get-epolicy-tariff",
-          beforeSend: function () {
-            $('button[type="submit"] > .fa').addClass('fa-spinner fa-spin')
-            if (globalFranchiseChangedFlag === true) {
-              dataLayer.push({
-                'event': 'smena_franshizy',
-                'eventCategory': 'Oscpv'
-              })
-              globalFranchiseChangedFlag = false;
-            }
-          },
-          error: function (error) {
+        type: "post",
+        data: {
+          type: type,
+          franchise: franshiza,
+          priv: priv,
+          city: city,
+          cityName: cityName,
+          zone: zone,
+          number: number,
+          epolis: epolis,
+          limit: limit,
+          selectedVehicleText: selectedVehicleText,
+          selectedEngineText: selectedEngineText
+        },
+        url: lang + "/ewa/get-epolicy-tariff",
+        beforeSend: function () {
+          $('button[type="submit"] > .fa').addClass('fa-spinner fa-spin')
+          if (globalFranchiseChangedFlag === true) {
+            dataLayer.push({
+              'event': 'smena_franshizy',
+              'eventCategory': 'Oscpv'
+            })
+            globalFranchiseChangedFlag = false;
+          }
+        },
+        error: function (error) {
+          // if not found vehicle by number
+          switchTabsForm();
+          dataLayer.push({
+            'event': 'perehod_na_parametri',
+            'eventCategory': 'Oscpv'
+          });
+        },
+        success: function (response) {
+          if (response.status === 'error') {
             // if not found vehicle by number
             switchTabsForm();
             dataLayer.push({
               'event': 'perehod_na_parametri',
               'eventCategory': 'Oscpv'
             });
-          },
-          success: function (response) {
-            if (response.status === 'error') {
-              // if not found vehicle by number
-              switchTabsForm();
-              dataLayer.push({
-                'event': 'perehod_na_parametri',
-                'eventCategory': 'Oscpv'
-              });
-            }
-            else {
-              dataLayer.push({
-                'event': 'gos_nomer_success_input',
-                'eventCategory': 'Oscpv'
-              });
-
-              globalVehicleNumberFlag = true;
-              $containerAjax.html(response);
-              propositionsInit($containerAjax);
-            }
-          },
-          complete: function () {
-            $('button[type="submit"] > .fa').removeClass('fa-spinner fa-spin');
-            showContainerAjax($containerAjax);
-            $containerAjax.dequeue("ajax");
-          }
-        })
-        .done(function () {
-          $('#notMyVehicle').on('click', function () {
+          } else {
             dataLayer.push({
-              'event': 'ne_moe_TS',
+              'event': 'gos_nomer_success_input',
               'eventCategory': 'Oscpv'
             });
-            switchTabsForm();
+
+            globalVehicleNumberFlag = true;
+            $containerAjax.html(response);
+            propositionsInit($containerAjax);
+          }
+        },
+        complete: function () {
+          $('button[type="submit"] > .fa').removeClass('fa-spinner fa-spin');
+          showContainerAjax($containerAjax);
+          $containerAjax.dequeue("ajax");
+        }
+      })
+          .done(function () {
+            $('#notMyVehicle').on('click', function () {
+              dataLayer.push({
+                'event': 'ne_moe_TS',
+                'eventCategory': 'Oscpv'
+              });
+              switchTabsForm();
+            });
+            $('html, body').animate({
+              scrollTop: $('.vehicle-info-wrapper').offset().top - 50
+            }, 500);
           });
-          $('html, body').animate({
-            scrollTop: $('.vehicle-info-wrapper').offset().top - 50
-          }, 500);
-        });
     });
 
     $containerAjax.dequeue("ajax"); // запустимо чергу
   };
 
-  var fillStar = function () { // ф-я для зафарбовування зірочок для кожного контейнера $("РейтингКонтейнер").each(fillStar)
-    var starsNum = $(this).attr("data-rating") // к-ть зірочок для зафарбування в атрибуті "data-rating" контейнера
-      ,
-      $stars = $(this).children("span.fa"),
-      i;
+  const fillStar = function () { // ф-я для зафарбовування зірочок для кожного контейнера $("РейтингКонтейнер").each(fillStar)
+    const starsNum = $(this).attr("data-rating") // к-ть зірочок для зафарбування в атрибуті "data-rating" контейнера
+        ,
+        $stars = $(this).children("span.fa");
+    let i;
     // 	fa-star-o контур зірочки
     // 	fa-star зафарбований контур зірочки
     for (i = 0; i < starsNum; ++i) {
@@ -490,58 +484,57 @@ $(document).ready(function () {
   };
 
   // ф-я заповнення зірочок відповідно до рейтинга
-  var fillAllStars = function (sSelector) { // sSelector - селектор контейнера із зрочками
-    var $ratings = $(sSelector); // контейнер із зірочками
+  const fillAllStars = function (sSelector) { // sSelector - селектор контейнера із зрочками
+    const $ratings = $(sSelector); // контейнер із зірочками
     $ratings.each(fillStar);
-  }
+  };
 
   var propositionsInit = function ($containerAjax) { // ф-я ініціалізації js-функціоналу на підвантаженому блоці пропозицій
-    var
-      $propositionsBlock = $containerAjax.find("#propositions"),
-      $proposListContainer = $("#propositionsList"), // контейнер списку пропозицій
-      $proposList = $propositionsBlock.find(".js-list_propositions"), // список пропозицій
-      $proposListItems = $proposList.children(".js-proposition"), // елементи списку пропозицій
-      iVisItemsNum = 5, // кількість елементів, що відображаються при згортанні (мінус 2)
-      $moreProposBtn = $propositionsBlock.find("#morePropositions"), // "Больше предложений" button
-      $vehicleSelect = $("#vehicle"),
-      $vehicleForm = $("#vehicleForm"),
-      $gNumberVehicleInput = $("#g_number_vehicle__input"),
-      $numberVehicleForm = $("#numberVehicleForm"),
-      $cityName = $vehicleForm.find("#regCity"),
-      $cityNameByNumberForm = $numberVehicleForm.find("#regCityNumberForm"),
-      $cityId = $vehicleForm.find("#cityId"),
-      $cityIdByNumberForm = $numberVehicleForm.find("#regCityIdNumberForm"),
-      $cityZone = $vehicleForm.find("#zoneId"),
-      $vehicleParameters = $vehicleForm.find(".js-vehicle__block"), // блоки з параметрами ТЗ
-      $vehicleParamSelects = $vehicleParameters.find(".js-selectric"), // селекти параметрів ТЗ
-      $carParameters = $vehicleParameters.filter(".js-car"),
-      $carParamSelect = $vehicleParamSelects.filter(".js-selectric_car"),
-      $trailerParameters = $vehicleParameters.filter(".js-trailer"),
-      $trailerParamSelect = $vehicleParamSelects.filter(".js-selectric_trailer"),
-      $busParameters = $vehicleParameters.filter(".js-bus"),
-      $busParamSelect = $vehicleParamSelects.filter(".js-selectric_bus"),
-      $motoParameters = $vehicleParameters.filter(".js-moto"),
-      $motoParamSelect = $vehicleParamSelects.filter(".js-selectric_moto"),
-      $buyBtns = $("#propositions").find(".js-proposition__buy"), // кнопка оформлення покупки
-      $makeBtns = $().add($buyBtns), // кнопки оформлення
-      $franshiza = $(".js-range_franshiza").ionRangeSlider({
-        grid: true,
-        min: 0,
-        max: 3200,
-        from: 3200,
-        values: [0, 1000, 1300, 1500, 1600, 2000, 2500, 2600, 3000, 3200],
-        onChange: function () {
-          if ($containerAjax.css('opacity') === 1) {
-            globalFranchiseChangedFlag = true;
+    const $propositionsBlock = $containerAjax.find("#propositions"),
+        $proposListContainer = $("#propositionsList"), // контейнер списку пропозицій
+        $proposList = $propositionsBlock.find(".js-list_propositions"), // список пропозицій
+        $proposListItems = $proposList.children(".js-proposition"), // елементи списку пропозицій
+        iVisItemsNum = 5, // кількість елементів, що відображаються при згортанні (мінус 2)
+        $moreProposBtn = $propositionsBlock.find("#morePropositions"), // "Больше предложений" button
+        $vehicleSelect = $("#vehicle"),
+        $vehicleForm = $("#vehicleForm"),
+        $gNumberVehicleInput = $("#g_number_vehicle__input"),
+        $numberVehicleForm = $("#numberVehicleForm"),
+        $cityName = $vehicleForm.find("#regCity"),
+        $cityNameByNumberForm = $numberVehicleForm.find("#regCityNumberForm"),
+        $cityId = $vehicleForm.find("#cityId"),
+        $cityIdByNumberForm = $numberVehicleForm.find("#regCityIdNumberForm"),
+        $cityZone = $vehicleForm.find("#zoneId"),
+        $vehicleParameters = $vehicleForm.find(".js-vehicle__block"), // блоки з параметрами ТЗ
+        $vehicleParamSelects = $vehicleParameters.find(".js-selectric"), // селекти параметрів ТЗ
+        $carParameters = $vehicleParameters.filter(".js-car"),
+        $carParamSelect = $vehicleParamSelects.filter(".js-selectric_car"),
+        $trailerParameters = $vehicleParameters.filter(".js-trailer"),
+        $trailerParamSelect = $vehicleParamSelects.filter(".js-selectric_trailer"),
+        $busParameters = $vehicleParameters.filter(".js-bus"),
+        $busParamSelect = $vehicleParamSelects.filter(".js-selectric_bus"),
+        $motoParameters = $vehicleParameters.filter(".js-moto"),
+        $motoParamSelect = $vehicleParamSelects.filter(".js-selectric_moto"),
+        $buyBtns = $("#propositions").find(".js-proposition__buy"), // кнопка оформлення покупки
+        $makeBtns = $().add($buyBtns), // кнопки оформлення
+        $franshiza = $(".js-range_franshiza").ionRangeSlider({
+          grid: true,
+          min: 0,
+          max: 3200,
+          from: 3200,
+          values: [0, 1000, 1300, 1500, 1600, 2000, 2500, 2600, 3000, 3200],
+          onChange: function () {
+            if ($containerAjax.css('opacity') === 1) {
+              globalFranchiseChangedFlag = true;
+            }
           }
-        }
-      });
+        });
     // ф-я ініціалізації функціонала кнопок купівлі і доставки
-    var buyBtnsInit = function () {
-      var init = function () {
+    const buyBtnsInit = function () {
+      const init = function () {
         // GTM variables
-        var nameOfCompany = $(this).parents(".js-proposition").attr("data-name"),
-          price = $(this).find(".b-text_btn").attr("data-fullprice");
+        const nameOfCompany = $(this).parents(".js-proposition").attr("data-name"),
+            price = $(this).find(".b-text_btn").attr("data-fullprice");
         dataLayer.push({
           'event': 'buySC',
           'eventCategory': 'buyOscpvLanding',
@@ -563,11 +556,11 @@ $(document).ready(function () {
         globalLogoSrc = $(this).parent().parent().find(".b-proposition__company img").attr('src'); // зберігаємо лого компанії для відправки запросу
         //                showOrderBlock(proposNum, $containerAjax, companyLogoSrc, price, orderInfoBlock); // показуємо блок оформлення
         //                document.location.href = "checkout";
-        var payload = {
+        const payload = {
           name: 'John',
           time: '2pm'
         };
-        var form = document.createElement('form');
+        const form = document.createElement('form');
         form.style.visibility = 'hidden'; // no user interaction is necessary
         form.method = 'POST'; // forms by default use GET query strings
         form.action = 'checkout';
@@ -613,8 +606,8 @@ $(document).ready(function () {
     };
 
     // ф-я приховування параметрів необраних ТЗ
-    var vehicleChange = function () {
-      var sVehicle = $(this).val();
+    const vehicleChange = function () {
+      const sVehicle = $(this).val();
       switch (sVehicle) {
         case "car": // авто
           $vehicleParameters.css("display", "none"); // ховаємо всі блоки з параметрами ТЗ
@@ -648,22 +641,21 @@ $(document).ready(function () {
     };
 
     // hide "Больше предложений" button if less then 5 propositions
-    var moreBtnHideCheck = function () {
+    const moreBtnHideCheck = function () {
       if ($proposListItems.length <= iVisItemsNum) {
         $moreProposBtn.css("display", "none")
-      }
-      else {
+      } else {
         $moreProposBtn.css("display", "block")
       }
     };
 
 
-    var proposTableInit = function (bSortInitialize) {
-      var $sortBtns = $propositionsBlock.find(".js-filter") // кнопки сортування
-        ,
-        $sortBtnByName = $sortBtns.filter(".js-filter_name"),
-        $sortBtnByPrice = $sortBtns.filter(".js-filter_price"),
-        $sortBtnByRating = $sortBtns.filter(".js-filter_rating");
+    const proposTableInit = function (bSortInitialize) {
+      const $sortBtns = $propositionsBlock.find(".js-filter") // кнопки сортування
+          ,
+          $sortBtnByName = $sortBtns.filter(".js-filter_name"),
+          $sortBtnByPrice = $sortBtns.filter(".js-filter_price"),
+          $sortBtnByRating = $sortBtns.filter(".js-filter_rating");
 
       // форма заказать в 1 клик
       $('.link-oneclick').on('click', function (event) {
@@ -671,8 +663,7 @@ $(document).ready(function () {
 
         if ($(this).parents('.b-proposition_row').hasClass('is--current')) {
           $('.b-proposition_row').removeClass('is--current');
-        }
-        else {
+        } else {
           $('.b-proposition_row').removeClass('is--current');
           $(this).parents('.b-proposition_row').addClass('is--current');
           $(this).parent().append($('#oneClickForm'));
@@ -686,16 +677,15 @@ $(document).ready(function () {
       // $parent - контейнер елементів, які сортуємо
       // $children - елементи, які сортуємо
       // bHasOrderIcon - чи є поле з сигналізацією зміни порядка
-      var sortByField = function (sName, $parent, $children, bHasOrderIcon) {
-        var bDesc = $(this).attr("data-order") == "asc"; // check previous sort order
+      const sortByField = function (sName, $parent, $children, bHasOrderIcon) {
+        const bDesc = $(this).attr("data-order") == "asc"; // check previous sort order
         $(this).attr("data-order", (bDesc) ? "desc" : "asc"); // first sort in ascending order (default icon - ascending)
-        var $orderIcon = $(this).children(".js-order");
+        const $orderIcon = $(this).children(".js-order");
 
         $children.sort(function (a, b) {
           if (bDesc) {
             return $(b).data(sName) > $(a).data(sName)
-          }
-          else {
+          } else {
             return $(a).data(sName) > $(b).data(sName)
           }
         }).appendTo($parent);
@@ -704,8 +694,7 @@ $(document).ready(function () {
         if (bHasOrderIcon) {
           if (bDesc) {
             $orderIcon.addClass("b-order__" + sName + "_revert");
-          }
-          else {
+          } else {
             $orderIcon.removeClass("b-order__" + sName + "_revert");
           }
         }
@@ -738,7 +727,8 @@ $(document).ready(function () {
             $proposListItems.filter(":gt(" + (iVisItemsNum - 1) + ")").slideUp(400);
           }
         });
-      };
+      }
+
 
       // розгортання і згортання деталей пропозиції
       $(".js-propos__btn_about").on("click", function () {
@@ -749,7 +739,7 @@ $(document).ready(function () {
     };
 
     // ф-я підвантаження нової таблиці пропозицій
-    var reloadPropositionsTable = function () {
+    const reloadPropositionsTable = function () {
       hideContainerAjax($proposListContainer);
 
       $proposListContainer.queue("ajax", function () {
@@ -764,20 +754,20 @@ $(document).ready(function () {
         //     ,number = $gNumberVehicleInput.val()
         //
         // ;
-        var activeStep = $('.b-choose-step_active').attr('for'),
-          type = activeStep === 'params_vehicle' ? $("#vehicleForm input[name='type']:checked").val() : $("#numberVehicleForm input[name='type']:checked").val(),
-          franshiza = activeStep === 'params_vehicle' ? $("#vehicleForm").find("input[name='franshiza']").val() : $("#numberVehicleForm").find("input[name='franshiza']").val(),
-          priv = activeStep === 'params_vehicle' ? ($("#vehicleForm [name='priv']").is(':checked') ? 1 : 0) : ($("#numberVehicleForm [name='n_priv']").is(':checked') ? 1 : 0),
-          cityName = globalCityName = activeStep === 'params_vehicle' ? $("#vehicleForm #regCity").val() : $("#numberVehicleForm #regCityNumberForm").val(),
-          city = activeStep === 'params_vehicle' ? $("#vehicleForm #cityId").val() : $("#numberVehicleForm #regCityIdNumberForm").val(),
-          zone = activeStep === 'params_vehicle' ? $("#vehicleForm #zoneId").val() : $("#vehicleForm #zoneIdNumberForm").val(),
-          epolis = activeStep === 'params_vehicle' ? $("#vehicleForm #epolisVehicleParams").is(":checked") : $("#numberVehicleForm #epolis").is(":checked"),
-          limit = activeStep === 'params_vehicle' ? $("#vehicleForm #upLimitVehicleParams").is(":checked") : $("#numberVehicleForm #upLimit").is(":checked"),
-          number = activeStep === 'params_vehicle' ? '' : $("#numberVehicleForm #g_number_vehicle__input").val(),
-          registeredAbroad = activeStep === 'params_vehicle' ? $("#vehicleForm #registeredAbroad").is(":checked") : false,
-          selectedVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm .b-vehicle_active").find('.b-vehicle__title').text() : false,
-          selectedEngineText = activeStep === 'params_vehicle' ? $("#vehicleForm").find('label[for="' + $("#vehicleForm input[name='type']:checked").attr('id') + '"]').text() : false,
-          mobileVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm li[data-index].selected").text().split(',') : false;
+        const activeStep = $('.b-choose-step_active').attr('for'),
+            type = activeStep === 'params_vehicle' ? $("#vehicleForm input[name='type']:checked").val() : $("#numberVehicleForm input[name='type']:checked").val(),
+            franshiza = activeStep === 'params_vehicle' ? $("#vehicleForm").find("input[name='franshiza']").val() : $("#numberVehicleForm").find("input[name='franshiza']").val(),
+            priv = activeStep === 'params_vehicle' ? ($("#vehicleForm [name='priv']").is(':checked') ? 1 : 0) : ($("#numberVehicleForm [name='n_priv']").is(':checked') ? 1 : 0),
+            cityName = globalCityName = activeStep === 'params_vehicle' ? $("#vehicleForm #regCity").val() : $("#numberVehicleForm #regCityNumberForm").val(),
+            city = activeStep === 'params_vehicle' ? $("#vehicleForm #cityId").val() : $("#numberVehicleForm #regCityIdNumberForm").val(),
+            zone = activeStep === 'params_vehicle' ? $("#vehicleForm #zoneId").val() : $("#vehicleForm #zoneIdNumberForm").val(),
+            epolis = activeStep === 'params_vehicle' ? $("#vehicleForm #epolisVehicleParams").is(":checked") : $("#numberVehicleForm #epolis").is(":checked"),
+            limit = activeStep === 'params_vehicle' ? $("#vehicleForm #upLimitVehicleParams").is(":checked") : $("#numberVehicleForm #upLimit").is(":checked"),
+            number = activeStep === 'params_vehicle' ? '' : $("#numberVehicleForm #g_number_vehicle__input").val(),
+            registeredAbroad = activeStep === 'params_vehicle' ? $("#vehicleForm #registeredAbroad").is(":checked") : false,
+            selectedVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm .b-vehicle_active").find('.b-vehicle__title').text() : false,
+            selectedEngineText = activeStep === 'params_vehicle' ? $("#vehicleForm").find('label[for="' + $("#vehicleForm input[name='type']:checked").attr('id') + '"]').text() : false,
+            mobileVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm li[data-index].selected").text().split(',') : false;
 
         let _selectedVehicleText = selectedVehicleText;
         let _selectedEngineText = selectedEngineText;
@@ -836,7 +826,7 @@ $(document).ready(function () {
       });
 
       showContainerAjax($proposListContainer);
-    }
+    };
 
     if ($window.outerWidth() <= BREAKPOINT_XS) {
 //    if ($window.outerWidth() <= BREAKPOINT_XS && !$toggleFilters.hasClass('b-link_unscrolled')) {
@@ -902,8 +892,8 @@ $(document).ready(function () {
 
     // якщо ми змінили значення міста реєстрації, але не обрали з меню автокомпліта, то повернемо раніше обране значення
     $("#regCity").blur(function () {
-      var dataItem = $(this).attr("data-item"), // раніше обране значення, збережене в атрибуті "data-item"
-        fieldValue = $(this).val(); // поточне значення
+      const dataItem = $(this).attr("data-item"), // раніше обране значення, збережене в атрибуті "data-item"
+          fieldValue = $(this).val(); // поточне значення
       if (dataItem && (fieldValue != dataItem)) { // перевірка чи є попередньо обране значення (якщо)
         $(this).val(dataItem); // як є то запишемо вибране раніше значення
       }
@@ -911,8 +901,8 @@ $(document).ready(function () {
 
     // якщо ми змінили значення міста реєстрації, але не обрали з меню автокомпліта, то повернемо раніше обране значення
     $("#regCityNumberForm").blur(function () {
-      var dataItem = $(this).attr("data-item"), // раніше обране значення, збережене в атрибуті "data-item"
-        fieldValue = $(this).val(); // поточне значення
+      const dataItem = $(this).attr("data-item"), // раніше обране значення, збережене в атрибуті "data-item"
+          fieldValue = $(this).val(); // поточне значення
       if (dataItem && (fieldValue != dataItem)) { // перевірка чи є попередньо обране значення (якщо)
         $(this).val(dataItem); // як є то запишемо вибране раніше значення
       }
@@ -983,15 +973,15 @@ $(document).ready(function () {
   };
 
   // order block
-  var showOrderBlock = function (proposNum, $containerAjax, companyLogoSrc, price, showOrderBlock) {
+  const showOrderBlock = function (proposNum, $containerAjax, companyLogoSrc, price, showOrderBlock) {
     hideContainerAjax($containerAjax);
 
 
-    var activeStep = $('.b-choose-step_active').attr('for'),
-      cityName = activeStep === 'params_vehicle' ? $("#vehicleForm #regCity").val() : $("#numberVehicleForm #regCityNumberForm").val(),
-      selectedVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm .b-vehicle_active").find('.b-vehicle__title').text() : false,
-      selectedEngineText = activeStep === 'params_vehicle' ? $("#vehicleForm").find('label[for="' + $("#vehicleForm input[name='type']:checked").attr('id') + '"]').text() : false,
-      mobileVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm li[data-index].selected").text().split(',') : false
+    const activeStep = $('.b-choose-step_active').attr('for'),
+        cityName = activeStep === 'params_vehicle' ? $("#vehicleForm #regCity").val() : $("#numberVehicleForm #regCityNumberForm").val();
+    let selectedVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm .b-vehicle_active").find('.b-vehicle__title').text() : false,
+        selectedEngineText = activeStep === 'params_vehicle' ? $("#vehicleForm").find('label[for="' + $("#vehicleForm input[name='type']:checked").attr('id') + '"]').text() : false;
+    const mobileVehicleText = activeStep === 'params_vehicle' ? $("#vehicleForm li[data-index].selected").text().split(',') : false;
     if (window.innerWidth < 900) {
       selectedVehicleText = mobileVehicleText[0];
       selectedEngineText = mobileVehicleText[1];
@@ -1016,8 +1006,7 @@ $(document).ready(function () {
                 'page_path': '/buy'
               });
               console.log("('event','page_view',{'page_path':'/buy'}): sent");
-            }
-            catch (e) {
+            } catch (e) {
               console.log("('event','page_view',{'page_path':'/buy'}): didn`t send", e);
             }
           }
@@ -1056,8 +1045,7 @@ $(document).ready(function () {
             $('.fa-map-marker').css({
               "margin-right": "11px"
             })
-          }
-          else {
+          } else {
             $('.b-proposition__buy_row').empty().append(carInfo).css({
               "padding": "31px 7px",
               "text-align": "left",
@@ -1128,29 +1116,29 @@ $(document).ready(function () {
   };
 
   // валідація форм
-  var commonValidateRules = { //валідація полів форм - об'єкт глобальних правил
+  const commonValidateRules = { //валідація полів форм - об'єкт глобальних правил
     errorPlacement: function (error, element) {
       element.attr('title', error.text()); // запишемо текст помилки в title атрибут поля
     }
   };
-  var orderFormsValidation = function ($method) { //$method - блок з формою (самостійно, по телефону, відвантаживши документи)
+  const orderFormsValidation = function ($method) { //$method - блок з формою (самостійно, по телефону, відвантаживши документи)
     // для полів з автокомплітом: валідація при втраті фокусу
-    var $autoCompleteFields = $method.find(".js-autocomplete");
+    const $autoCompleteFields = $method.find(".js-autocomplete");
 
     $autoCompleteFields.blur(function () { // втрата фокуса поля автокомпліта
       if ($(this).has("js-autocomplete_pre")) {
         return false
-      };
+      }
+      ;
       if ($(this).next().val()) { // додамо позначку помилки валідації якщо не вибрали значення автокомпліта
         $(this).parent(".b-form__cell").removeClass("b-cell_error").addClass("b-cell_valid")
-      }
-      else { // а як навпаки, то позначимо валідним
+      } else { // а як навпаки, то позначимо валідним
         $(this).parent(".b-form__cell").removeClass("b-cell_valid").addClass("b-cell_error")
       }
     });
 
     // рядок регулярного вираза валідації номерного знака
-    var plateRegExpStr = "[A-Za-zА-Яа-яІі0-9]";
+    const plateRegExpStr = "[A-Za-zА-Яа-яІі0-9]";
     /*"("
               + "[Т]?\\d{5}[А-ЯЁІЇ0-9]{2,3}|"				// ТЦЦЦЦЦББ, ЦЦЦЦЦББ,
               + "\\d{4}[A-ZА-ЯЁІЇ0-9](\\d|[А-ЯЁІЇ]{1,2})|"	// ЦЦЦЦБЦ, ЦЦЦЦББ, ЦЦЦЦБББ,
@@ -1169,11 +1157,11 @@ $(document).ready(function () {
               + "dp\\d{4,6}|"							// DPЦЦЦЦ, DPЦЦЦЦЦ, DPЦЦЦЦЦЦ,
               + ")";*/
 
-    var finalizeValidateRules = { // валідація полів форм - об'єкт локальних правил
+    const finalizeValidateRules = { // валідація полів форм - об'єкт локальних правил
       highlight: function (element, errorClass, validClass) {
-        var attr = $(element).attr('data-document');
+        const attr = $(element).attr('data-document');
         if ((typeof attr !== typeof undefined && attr !== false && attr === $globalDocumentTypeSelect) ||
-          typeof attr === typeof undefined && attr === false) {
+            typeof attr === typeof undefined && attr === false) {
           console.log($(element).attr('data-document'), 'element')
           $(element).addClass(errorClass).removeClass(validClass);
           $(element.form).find("label[for=" + element.id + "]").parent('.b-form__cell').addClass('b-cell_' + errorClass).removeClass('b-cell_' + validClass);
@@ -1434,11 +1422,11 @@ $(document).ready(function () {
       },
       submitHandler: function (form) { // replaces default form submit behavior
         // треба також перевірити поля автокомпліта
-        var bFocused = false,
-          bValid = true,
-          $fileFieldsVisible = $method.find("input[type='file']").filter(":visible"),
-          i = 0,
-          tempField;
+        let bFocused = false,
+            bValid = true;
+        const $fileFieldsVisible = $method.find("input[type='file']").filter(":visible"),
+            i = 0;
+        let tempField;
         // console.log($fileFieldsVisible);
 
         // required autocomplete fields check
@@ -1446,8 +1434,7 @@ $(document).ready(function () {
           if (!$(this).prop("disabled")) {
             if ($(this).next().val()) {
               $(this).parent(".b-form__cell").addClass("b-cell_valid")
-            }
-            else {
+            } else {
               $(this).parent(".b-form__cell").addClass("b-cell_error");
               bValid = false;
               if (!bFocused) {
@@ -1470,14 +1457,13 @@ $(document).ready(function () {
           hideContainerAjax($containerAjax);
           $containerAjax.queue("ajax", function () {
             if (form.id == 'formByUpload') {
-              var formData = new FormData($('#formByUpload')[0]);
+              const formData = new FormData($('#formByUpload')[0]);
               if (filesToUpload.length > 0) {
                 $.each(filesToUpload, function (i, val) {
 
                   if (val !== undefined && val.file['name'] !== undefined) {
                     return formData.append("file" + (i + 1).toString(), val.file);
-                  }
-                  else {
+                  } else {
                     return formData.append("file" + (i + 1).toString(), JSON.stringify(val));
                   }
 
@@ -1518,8 +1504,7 @@ $(document).ready(function () {
                   $(".b-container_preloader").fadeOut();
                 }
               });
-            }
-            else {
+            } else {
               $.ajax({
                 url: form.action,
                 type: form.method,
@@ -1533,8 +1518,7 @@ $(document).ready(function () {
                       'eventCategory': 'formSentOscpvLanding',
                       'eventAction': 'form'
                     });
-                  }
-                  else if (form.id == 'formByPhone') {
+                  } else if (form.id == 'formByPhone') {
                     dataLayer.push({
                       'event': 'GAeventByPhone',
                       'eventCategory': 'formSentOscpvLanding',
@@ -1563,52 +1547,48 @@ $(document).ready(function () {
 
   // ініціалізація блока оформлення замовлень
   var orderBlockInit = function ($containerAjax) {
-    var $orderBlock = $("#finalize"),
-      $methodBtns = $orderBlock.find(".b-finalize__btn_method"),
-      $methods = $orderBlock.find(".b-finalize__method"),
-      $activeMethod = $methods.filter(".js-method_active") // метод "Заповнити самостійно"
-      ,
-      $trash = $orderBlock.find(".b-method__trash") // блок хлопець-дівчина
-      ,
-      $trashTabs = $trash.find(".b-trash__tab"),
-      $trashCard = $trash.find(".b-trash__sides"),
-      $brand = $("input[name = 'brand']"),
-      $model = $("input[name = 'model']"),
-      $filesWrap = $orderBlock.find(".b-wrap_files"),
-      $filesInput = $filesWrap.find("input[type='file']"),
-      $filesList = $filesWrap.find(".b-list_files")
-      // ,$filesProgress = $filesWrap.find(".b-progress_files")
-      ,
-      $submitButtons = $methods.find("#submitBySelf, #submitByPhone, #submitByUpload"),
-      validatorCurrent = orderFormsValidation($methods.filter("#bySelf")) // formBySelf validation init
-      // змінні для логіки відображення доставки
-      ,
-      $deliveryMode = $methods.find("select[name='deliveryMode']") // селекти методів доставки
-      ,
-      $type_of_document = $methods.find("select[name='type_of_document']") // селект documents
-      ,
-      deliveryStr = "bySelf" //самовывоз
-      ,
-      regionId = "bySelf" //самовывоз
-      // наступних елементів буде по 2 об'єкти - один в формі методу "Заповнити самостійно", другий в "Отправить документы"
-      ,
-      $selfMap = $methods.find(".b-form__cell_map"),
-      $courierCity = $methods.find("input[name='delivCityId']").prev(),
-      $courierAddr = $methods.find("input[name='deliveryAddr']"),
-      $newPostRegion = $methods.find("select[name='regionNP']"),
-      $newPostCity = $methods.find("input[name='delivCityIdNP']").prev(),
-      $newPostDivision = $methods.find("select[name='delivDivisionIdNP']"),
-      $newPostRow = $(".js-np-address").parents(".row_form"),
-      $bySelfAddress = $(".js-self-address"),
-      $commentField = $(".js-comment-order"),
-      $orderByYourselfNavigate = $orderBlock.find(".js-step-nav");
+    const $orderBlock = $("#finalize"),
+        $methodBtns = $orderBlock.find(".b-finalize__btn_method"),
+        $methods = $orderBlock.find(".b-finalize__method");
+    let $activeMethod = $methods.filter(".js-method_active") // метод "Заповнити самостійно"
+    ;const $trash = $orderBlock.find(".b-method__trash") // блок хлопець-дівчина
+        ,
+        $trashTabs = $trash.find(".b-trash__tab"),
+        $trashCard = $trash.find(".b-trash__sides"),
+        $brand = $("input[name = 'brand']"),
+        $model = $("input[name = 'model']"),
+        $filesWrap = $orderBlock.find(".b-wrap_files"),
+        $filesInput = $filesWrap.find("input[type='file']"),
+        $filesList = $filesWrap.find(".b-list_files")
+        // ,$filesProgress = $filesWrap.find(".b-progress_files")
+        ,
+        $submitButtons = $methods.find("#submitBySelf, #submitByPhone, #submitByUpload");
+    let validatorCurrent = orderFormsValidation($methods.filter("#bySelf")) // formBySelf validation init
+        // змінні для логіки відображення доставки
+    ;const $deliveryMode = $methods.find("select[name='deliveryMode']") // селекти методів доставки
+        ,
+        $type_of_document = $methods.find("select[name='type_of_document']") // селект documents
+    ;let deliveryStr = "bySelf" //самовывоз
+    ;const regionId = "bySelf" //самовывоз
+        // наступних елементів буде по 2 об'єкти - один в формі методу "Заповнити самостійно", другий в "Отправить документы"
+        ,
+        $selfMap = $methods.find(".b-form__cell_map"),
+        $courierCity = $methods.find("input[name='delivCityId']").prev(),
+        $courierAddr = $methods.find("input[name='deliveryAddr']"),
+        $newPostRegion = $methods.find("select[name='regionNP']"),
+        $newPostCity = $methods.find("input[name='delivCityIdNP']").prev(),
+        $newPostDivision = $methods.find("select[name='delivDivisionIdNP']"),
+        $newPostRow = $(".js-np-address").parents(".row_form"),
+        $bySelfAddress = $(".js-self-address"),
+        $commentField = $(".js-comment-order"),
+        $orderByYourselfNavigate = $orderBlock.find(".js-step-nav");
 
     // show only selected buy method
     $methodBtns.click(function (e) {
       e.preventDefault();
 
-      var $activeBtn = $methodBtns.filter(".b-finalize__btn_active"),
-        methodNum = $methodBtns.index($(this));
+      const $activeBtn = $methodBtns.filter(".b-finalize__btn_active"),
+          methodNum = $methodBtns.index($(this));
       // $activeMethod = $methods.filter(".js-method_active");
 
       if ($activeBtn[0] != $(this)[0]) {
@@ -1624,9 +1604,8 @@ $(document).ready(function () {
       }
 
       // scroll to block
-      var
-        $anchor = $methods.parent(),
-        offsetAnchor = $anchor.offset().top;
+      const $anchor = $methods.parent(),
+          offsetAnchor = $anchor.offset().top;
 
       // offsetAnchor -= $("#header").outerHeight();	// fixed header offset
 
@@ -1638,12 +1617,12 @@ $(document).ready(function () {
     // Order by yourself - steps navigation
     $orderByYourselfNavigate.on('click', function (e) {
       e.preventDefault();
-      var stepId = $(this).data('step');
-      var isEmptyField = false;
-      var prevStep = 0;
+      const stepId = $(this).data('step');
+      let isEmptyField = false;
+      let prevStep = 0;
 
       $('.step--' + (stepId - 1) + ' .b-form__block .b-form__cell').each(function () {
-        var attr = $(this).find('input').attr('data-document');
+        const attr = $(this).find('input').attr('data-document');
 
         if ((typeof attr !== typeof undefined && attr !== false && attr === $globalDocumentTypeSelect) ||
           attr === undefined) {
@@ -1674,10 +1653,10 @@ $(document).ready(function () {
 
       });
 
-      var $fields = $('#formBySelf input, #formBySelf select'),
-        formData = {},
-        dataForSend = {},
-        documentObj = {};
+      const $fields = $('#formBySelf input, #formBySelf select'),
+          formData = {},
+          dataForSend = {},
+          documentObj = {};
 
       $fields.each(function (index, field) {
         formData[$(field).attr('name')] = $(field).val();
@@ -1787,11 +1766,11 @@ $(document).ready(function () {
     });
 
     function sendDataEpolis() {
-      var $fields = $('#formBySelf input, #formBySelf select'),
-        formData = {},
-        dataForSend = {},
-        documentObj = {},
-        insuranceObject = {};
+      const $fields = $('#formBySelf input, #formBySelf select'),
+          formData = {};
+      let dataForSend = {},
+          documentObj = {},
+          insuranceObject = {};
 
       $fields.each(function (index, field) {
         formData[$(field).attr('name')] = $(field).val();
@@ -1918,7 +1897,7 @@ $(document).ready(function () {
     }
 
     $window.on("resize", function () {
-      var methodNum = ($window.outerWidth() <= BREAKPOINT_XS) ? 2 : 0;
+      const methodNum = ($window.outerWidth() <= BREAKPOINT_XS) ? 2 : 0;
 
       if (!$methods.eq(methodNum).hasClass("js-method_active") && !globalEpolis) {
         setActiveMethod(methodNum);
@@ -1977,7 +1956,7 @@ $(document).ready(function () {
       }
     });
     $("#plateNum").on('keyup', function () {
-      var str = $("#plateNum").val();
+      const str = $("#plateNum").val();
       // var r = '';
       // for (var i = 0; i < str.length; i++) {
       //     r += map[str.charAt(i)] || str.charAt(i);
@@ -1987,7 +1966,7 @@ $(document).ready(function () {
     });
 
     $("#g_number_vehicle__input").on('keyup', function () {
-      var str = $("#g_number_vehicle__input").val();
+      const str = $("#g_number_vehicle__input").val();
       // var r = '';
       // for (var i = 0; i < str.length; i++) {
       //     r += map[str.charAt(i)] || str.charAt(i);
@@ -2009,14 +1988,14 @@ $(document).ready(function () {
     });
 
     // pickadate initialization
-    var pickadayOptions = {
+    const pickadayOptions = {
       min: +1, // початкова дата - завтрашній день
       onClose: function () {
         $("#bySelf").find(".picker__holder").blur(); // заборонимо спливати календарю при згортанні-розгортанні вікна браузера (коли фокус на даті)
       }
     };
 
-    var pickadayOptionsBirthday = {
+    const pickadayOptionsBirthday = {
       max: -1, // початкова дата - завтрашній день
       onClose: function () {
         $("#bySelf").find(".picker__holder").blur(); // заборонимо спливати календарю при згортанні-розгортанні вікна браузера (коли фокус на даті)
@@ -2164,19 +2143,19 @@ $(document).ready(function () {
             $fileField.change();
         });
     });*/
-    var $button = $('.b-button_files') // кнопка вибору файла (над input)
-      ,
-      $fileProgress = $button.find(".b-progress_files") // div прогреса завантаження
+    const $button = $('.b-button_files') // кнопка вибору файла (над input)
+        ,
+        $fileProgress = $button.find(".b-progress_files"); // div прогреса завантаження
     $.fn.fileUploader = function (sectionIdentifier) {
-      var fileIdCounter = 0;
+      let fileIdCounter = 0;
 
       $("#copies_byupload").change(function (evt) {
-        var output = [];
+        const output = [];
 
-        for (var i = 0; i < evt.target.files.length; i++) {
+        for (let i = 0; i < evt.target.files.length; i++) {
           fileIdCounter++;
-          var file = evt.target.files[i];
-          var fileId = sectionIdentifier + fileIdCounter;
+          const file = evt.target.files[i];
+          const fileId = sectionIdentifier + fileIdCounter;
 
           if (file.size / 1024 / 1024 <= 9) {
             if (file.type === 'image/jpeg' || file.type === 'image/png') {
@@ -2191,7 +2170,7 @@ $(document).ready(function () {
                   width: "" + this.files.length * 102 + "%"
                 }, 800);
 
-                var removeLink = "<span class=\"fa fa-times-circle-o js-clearFiles removeFile\" aria-hidden=\"true\" data-fileid=\"" + fileId + "\"></span></span>";
+                const removeLink = "<span class=\"fa fa-times-circle-o js-clearFiles removeFile\" aria-hidden=\"true\" data-fileid=\"" + fileId + "\"></span></span>";
 
                 output.push('<span class="b-filename"><span class="b-filename__text">', escape(file.name), '</span>', removeLink, "</span> ");
 
@@ -2237,7 +2216,7 @@ $(document).ready(function () {
       $(this).on("click", ".removeFile", function (e) {
         e.preventDefault();
 
-        var fileId = $(this).attr("data-fileid");
+        const fileId = $(this).attr("data-fileid");
 
         $.each(filesToUpload, function (key, value) {
 
@@ -2281,7 +2260,7 @@ $(document).ready(function () {
     };
 
     // var $navBlock = $('.company-profile .nav-block');
-    var $addInput = $('.add-input');
+    const $addInput = $('.add-input');
 
     $(".b-wrap_files").fileUploader("file");
 
@@ -2289,12 +2268,12 @@ $(document).ready(function () {
     document.getElementById('inn')
       .addEventListener('keyup', function () {
         if (document.getElementById('inn').value.length > 4) {
-          var days = (document.getElementById("inn").value).substring(0, 5) * 1 - 1;
-          var date = new Date(1900, 0, 1);
+          const days = (document.getElementById("inn").value).substring(0, 5) * 1 - 1;
+          const date = new Date(1900, 0, 1);
           date.setDate(date.getDate() + days);
-          var date_day = date.getDate();
-          var date_month = date.getMonth() + 1;
-          var date_year = date.getFullYear();
+          const date_day = date.getDate();
+          const date_month = date.getMonth() + 1;
+          const date_year = date.getFullYear();
           document.getElementById("birthday_insured").value = ('0' + date_day).slice(-2) + '-' + ('0' + date_month).slice(-2) + '-' + date_year;
         }
       });
@@ -2334,10 +2313,10 @@ $(document).ready(function () {
       onChange: function (element) { // element==this - це наш select, він лишається тим самим об'єктом і після ініціалізації selectric
         console.log("document type changed")
         let documentType = $globalDocumentTypeSelect = $(element).val(); // current select value
-        var indexOfThis = $type_of_document.index($(element)); // index of current $(element) between $type_of_document selects
+        const indexOfThis = $type_of_document.index($(element)); // index of current $(element) between $type_of_document selects
 
         // при зміні значення клікнутого селекта змінимо значення решти селектів доставки в інших методах з доставкою
-        for (var i = 0; i < $type_of_document.length; ++i) {
+        for (let i = 0; i < $type_of_document.length; ++i) {
           if (i != indexOfThis) {
             $type_of_document.eq(i).val(documentType).selectric("refresh"); // змінюємо значення і оновлюємо selectric
           }
@@ -2372,10 +2351,10 @@ $(document).ready(function () {
       onChange: function (element) { // element==this - це наш select, він лишається тим самим об'єктом і після ініціалізації selectric
         console.log("delivery mode changed")
         deliveryStr = $(element).val(); // current select value
-        var indexOfThis = $deliveryMode.index($(element)); // index of current $(element) between $deliveryMode selects
+        const indexOfThis = $deliveryMode.index($(element)); // index of current $(element) between $deliveryMode selects
 
         // при зміні значення клікнутого селекта змінимо значення решти селектів доставки в інших методах з доставкою
-        for (var i = 0; i < $deliveryMode.length; ++i) {
+        for (let i = 0; i < $deliveryMode.length; ++i) {
           if (i != indexOfThis) {
             $deliveryMode.eq(i).val(deliveryStr).selectric("refresh"); // змінюємо значення і оновлюємо selectric
           }
@@ -2462,11 +2441,11 @@ $(document).ready(function () {
         $(this).parents(".selectric-wrapper").find(".selectric-items li.disabled").remove(); //прибираємо з меню неактивний пункт (placeholder)
       },
       onChange: function (element) { // element==this - це наш select, він лишається тим самим об'єктом і після ініціалізації selectric
-        var regionId = $(element).val(); // current select value
-        var indexOfThis = $deliveryMode.index($(element)); // index of current $(element) between $newPostRegion selects
+        const regionId = $(element).val(); // current select value
+        const indexOfThis = $deliveryMode.index($(element)); // index of current $(element) between $newPostRegion selects
 
         // при зміні значення клікнутого селекта змінимо значення решти селектів доставки в інших методах з доставкою
-        for (var i = 0; i < $deliveryMode.length; ++i) {
+        for (let i = 0; i < $deliveryMode.length; ++i) {
           if (i != indexOfThis) {
             $newPostRegion.eq(i).val(regionId).selectric("refresh"); // змінюємо значення і оновлюємо selectric
             $newPostRegion.eq(i).parents(".selectric-wrapper").find(".selectric-items li.disabled").remove(); //прибираємо з меню неактивний пункт (placeholder)
@@ -2500,11 +2479,11 @@ $(document).ready(function () {
         $(this).parents(".selectric-wrapper").find(".selectric-items li.disabled").remove(); //прибираємо з меню неактивний пункт (placeholder)
       },
       onChange: function (element) { // element==this - це наш select, він лишається тим самим об'єктом і після ініціалізації selectric
-        var divisionId = $(element).val(); // current select value
-        var indexOfThis = $deliveryMode.index($(element)); // index of current $(element) between $newPostDivision selects
+        const divisionId = $(element).val(); // current select value
+        const indexOfThis = $deliveryMode.index($(element)); // index of current $(element) between $newPostDivision selects
 
         // при зміні значення клікнутого селекта змінимо значення решти селектів доставки в інших методах з доставкою
-        for (var i = 0; i < $deliveryMode.length; ++i) {
+        for (let i = 0; i < $deliveryMode.length; ++i) {
           if (i != indexOfThis) {
             $newPostDivision.eq(i).val(divisionId).selectric("refresh"); // змінюємо значення і оновлюємо selectric
             $newPostDivision.eq(i).parents(".selectric-wrapper").find(".selectric-items li.disabled").remove(); //прибираємо з меню неактивний пункт (placeholder)
@@ -2524,7 +2503,7 @@ $(document).ready(function () {
     // місто
     fieldAutocomplete(2, $newPostCity, "/oscpv/cities/np-city", $newPostRegion, function () {
       $newPostDivision.each(function (index) {
-        var t = this;
+        const t = this;
         $(t).val("");
         // $(this).next().val("");
         $.ajax({
@@ -2537,7 +2516,7 @@ $(document).ready(function () {
             console.log('error');
           },
           success: function (response) {
-            var html = $.parseHTML(response);
+            const html = $.parseHTML(response);
             $(t).html('<option value="" disabled selected hidden>Выберите отделение</option>');
             $(t).append(response);
           },
@@ -2624,7 +2603,7 @@ $(document).ready(function () {
   // }
 
   // vehicle calculator
-  var showVehicleCalc = function ($containerAjax) {
+  const showVehicleCalc = function ($containerAjax) {
     hideContainerAjax($containerAjax);
 
     $containerAjax.queue("ajax", function () {
@@ -2664,14 +2643,14 @@ $(document).ready(function () {
       nativeOnMobile: false,
       onSelect: function (element) {
         $(element).change();
-        var value = $(element).val();
+        const value = $(element).val();
         $("#vehicleForm").find("input[name='type'][value=" + value + "]").prop("checked", true).trigger("change");
       }
     });
 
     // choose block
-    var $chooseSteps = $(".b-choose-steps"),
-      $chooseStep = $(".b-choose-step");
+    const $chooseSteps = $(".b-choose-steps"),
+        $chooseStep = $(".b-choose-step");
 
     $chooseSteps.mouseleave(function () { // виділимо вибраний блок коли курсор ззовні
       $chooseStep.filter(".js-choose-step_active").addClass("b-choose-step_active");
@@ -2685,7 +2664,7 @@ $(document).ready(function () {
     $chooseStep.click(function () {
       $chooseStep.removeClass("js-choose-step_active");
       $(this).addClass("js-choose-step_active");
-      var step = $chooseStep.index($(this)); // обранний тип оформлення
+      const step = $chooseStep.index($(this)); // обранний тип оформлення
 
       if (step === 0) { // будемо ховати і показувати обраний блок
         $("#vehicleForm").fadeOut(300);
@@ -2705,13 +2684,13 @@ $(document).ready(function () {
 
 
     // vehicles labels select
-    var $vehicles = $(".b-vehicle"), //	блоки тз з картинками
-      $vehiclesBlock = $(".b-vehicles"), // $vehicles container
-      $paramBlocks = $(".b-params"), // відповідні блоки з радіобатонами до кожного тз
-      $priv = document.getElementById("priv"),
-      $minus = document.getElementById("minus"),
-      $bpriv = document.getElementById("bpriv"),
-      $regAbr = document.getElementById("registeredAbroad");
+    const $vehicles = $(".b-vehicle"), //	блоки тз з картинками
+        $vehiclesBlock = $(".b-vehicles"), // $vehicles container
+        $paramBlocks = $(".b-params"), // відповідні блоки з радіобатонами до кожного тз
+        $priv = document.getElementById("priv"),
+        $minus = document.getElementById("minus"),
+        $bpriv = document.getElementById("bpriv");
+    let $regAbr = document.getElementById("registeredAbroad");
     $vehiclesBlock.mouseleave(function () { // виділимо вибраний блок коли курсор ззовні
       $vehicles.filter(".js-vehicle_active").addClass("b-vehicle_active");
     });
@@ -2724,8 +2703,8 @@ $(document).ready(function () {
     $vehicles.click(function () {
       $vehicles.removeClass("js-vehicle_active");
       $(this).addClass("js-vehicle_active");
-      var index = $vehicles.index($(this)), // індекс типу тз (від 0 до 5)
-        $paramBlockActive = $paramBlocks.filter(".js-params_active");
+      const index = $vehicles.index($(this)), // індекс типу тз (від 0 до 5)
+          $paramBlockActive = $paramBlocks.filter(".js-params_active");
       if ($paramBlockActive != $(this)) { // не будемо ховати і показувати вже видимий блок параметроів
         $paramBlockActive.removeClass("js-params_active"); // робимо неактивним блоком параметрів
         $paramBlockActive.removeClass("b-params_active"); // ховаємо неактивний блок параметрів
@@ -2771,9 +2750,9 @@ $(document).ready(function () {
 
 
     // валідація
-    var $vehicleForm = $("#vehicleForm"),
-      $cityId = $vehicleForm.find("#cityId"),
-      $cityName = $vehicleForm.find("#regCity");
+    const $vehicleForm = $("#vehicleForm"),
+        $cityId = $vehicleForm.find("#cityId"),
+        $cityName = $vehicleForm.find("#regCity");
     $regAbr = document.getElementById("registeredAbroad");
     $vehicleForm.submit(function (event) {
       event.preventDefault();
@@ -2786,10 +2765,10 @@ $(document).ready(function () {
     });
 
     // валідація
-    var $numberVehicleForm = $("#numberVehicleForm"),
-      $cityIdNumberForm = $numberVehicleForm.find("#regCityIdNumberForm"),
-      $cityNameNumberForm = $numberVehicleForm.find("#regCityNumberForm"),
-      $gNumberVehicleInput = $("#g_number_vehicle__input");
+    const $numberVehicleForm = $("#numberVehicleForm"),
+        $cityIdNumberForm = $numberVehicleForm.find("#regCityIdNumberForm"),
+        $cityNameNumberForm = $numberVehicleForm.find("#regCityNumberForm"),
+        $gNumberVehicleInput = $("#g_number_vehicle__input");
     $numberVehicleForm.submit(function (event) {
       event.preventDefault();
       if (!$cityIdNumberForm.val()) { //якщо не вибране місто реєстрації
@@ -2809,10 +2788,11 @@ $(document).ready(function () {
   // clickCallbackFn - callback fn
   var precomplete = function (iSymbols, $field, clickCallbackFn) {
     // var  $field = $(context)
-    var $idField = $field.next(),
-      $zoneIdField, $dropMenu = $idField.siblings(".js-precomplete"),
-      $menuItems = $dropMenu.children(),
-      fieldValue, currentValue;
+    const $idField = $field.next();
+    let $zoneIdField;
+    const $dropMenu = $idField.siblings(".js-precomplete"),
+        $menuItems = $dropMenu.children();
+    let fieldValue, currentValue;
 
     $field.keyup(function () {
       currentValue = $(this).val();
@@ -2832,10 +2812,9 @@ $(document).ready(function () {
       $dropMenu.fadeOut();
     });
     $menuItems.click(function (event) {
-      var
-        selectedItem = $(this).text(),
-        selectedID = $(this).attr("data-id"),
-        selectedZoneID = $(this).attr("data-zone");
+      const selectedItem = $(this).text(),
+          selectedID = $(this).attr("data-id"),
+          selectedZoneID = $(this).attr("data-zone");
 
       $field.val(selectedItem);
       $field.attr("data-item", selectedItem);
@@ -2857,19 +2836,19 @@ $(document).ready(function () {
   // (enter string, shows items, select item -> send item id)
   // note: under autocompleted field must be placed hidden input with name attr, to return item id
   var fieldAutocomplete = function (iMinChars, $objToComplete, jsonAddr, $dataIdtoSend, callbackFn) {
-    var oJS //відповідний JSоб'єкт до JSON об'єкту AJAX відповіді
-      , items = [] // масив елементів
-      ,
-      propertiesLength // зберігаємо тут к-ть властивостей item-а
-      , bLength3, itemIds = [] // масив id елементів
-      ,
-      itemOtherIds = [] // масив додаткових id елементів
-      ,
-      criteria = null,
-      itemIndex, currentId, currentOtherId;
+    let oJS //відповідний JSоб'єкт до JSON об'єкту AJAX відповіді
+        , items = [] // масив елементів
+        ,
+        propertiesLength // зберігаємо тут к-ть властивостей item-а
+        , bLength3, itemIds = [] // масив id елементів
+        ,
+        itemOtherIds = [] // масив додаткових id елементів
+        ,
+        criteria = null,
+        itemIndex, currentId, currentOtherId;
 
     $objToComplete.each(function (index) {
-      var t = this;
+      const t = this;
       $(t).autoComplete({
         cache: 0,
         minChars: iMinChars,
@@ -2906,7 +2885,7 @@ $(document).ready(function () {
               }
               bLength3 = (propertiesLength == 3); // маємо додатковий Id (zoneId), треба створити їх масив itemOtherIds
               if (oJS.length != 0) { // перевіряємо чи не відсутні співпадіння (чи відповідь не пустий масив)
-                for (var i = 0; i < oJS.items.length; ++i) { // наповнимо масив елементів і їхніх id
+                for (i = 0; i < oJS.items.length; ++i) { // наповнимо масив елементів і їхніх id
                   items.push(oJS.items[i].name);
                   itemIds.push(oJS.items[i].id);
                   if (bLength3) {
@@ -2952,9 +2931,9 @@ $(document).ready(function () {
       //}
     });
     $objToComplete.blur(function () { // при втраті фокуса, якщо ми змінили значення, але не обрали з меню автокомпліта, то повернемо раніше обране значення полю
-      var dataItem = $(this).attr("data-item") // раніше обране значення, збережене в атрибуті "data-item"
-        ,
-        fieldValue = $(this).val() // поточне значення
+      const dataItem = $(this).attr("data-item") // раніше обране значення, збережене в атрибуті "data-item"
+          ,
+          fieldValue = $(this).val() // поточне значення
       ;
       if (dataItem && (fieldValue != dataItem)) { // перевірка чи є попередньо обране значення (якщо)
         $(this).val(dataItem); // як є то запишемо вибране раніше значення
@@ -2966,7 +2945,7 @@ $(document).ready(function () {
   $(document).on('click', '.b-crumbs__link, .js-crumbs__link', function (e) {
     e.preventDefault();
 
-    var step = +$(this).attr('data-step'); // 1 - вибір ТЗ, 2 - пропозиції
+    const step = +$(this).attr('data-step'); // 1 - вибір ТЗ, 2 - пропозиції
 
     switch (step) {
       case 1:
@@ -3000,7 +2979,7 @@ $(document).ready(function () {
   vehicleCalcInit($containerAjax); //
 
   // reasons slider
-  var $sliderReasons = $(".b-reasons__slider .b-slider__string").slick({
+  const $sliderReasons = $(".b-reasons__slider .b-slider__string").slick({
     arrows: false,
     infinite: true,
     speed: 400,
@@ -3009,11 +2988,11 @@ $(document).ready(function () {
     autoplay: true,
     autoplaySpeed: 4400,
     responsive: [{
-        breakpoint: 770,
-        settings: {
-          slidesToShow: 2
-        }
-      },
+      breakpoint: 770,
+      settings: {
+        slidesToShow: 2
+      }
+    },
       {
         breakpoint: 600,
         settings: {
@@ -3023,8 +3002,8 @@ $(document).ready(function () {
     ]
   });
   // add my buttons to ads slider
-  var $sliderReasonsPrevBtn = $sliderReasons.parents(".b-reasons__slider").find(".b-slider__control_left"),
-    $sliderReasonsNextBtn = $sliderReasons.parents(".b-reasons__slider").find(".b-slider__control_right");
+  const $sliderReasonsPrevBtn = $sliderReasons.parents(".b-reasons__slider").find(".b-slider__control_left"),
+      $sliderReasonsNextBtn = $sliderReasons.parents(".b-reasons__slider").find(".b-slider__control_right");
   $sliderReasonsPrevBtn.click(function (event) {
     event.preventDefault();
     $sliderReasons.slick("slickPrev");
@@ -3038,9 +3017,9 @@ $(document).ready(function () {
   fillAllStars(".b-company__rating");
 
   // clientsRating/mtsb switch
-  var $ratingBtns = $(".b-section_rating .b-rating__btn"),
-    $ratingClients = $(".b-rating__wrapper_clients"),
-    $ratingMtsbu = $(".b-rating__wrapper_mtsbu");
+  const $ratingBtns = $(".b-section_rating .b-rating__btn"),
+      $ratingClients = $(".b-rating__wrapper_clients"),
+      $ratingMtsbu = $(".b-rating__wrapper_mtsbu");
   $ratingBtns.click(function () {
     if (!$(this).hasClass("b-btn_active")) {
       $ratingBtns.removeClass("b-btn_active");
@@ -3059,8 +3038,8 @@ $(document).ready(function () {
   //	scroll to calculator
   $(".b-anchor_calculator").click(function (event) {
     event.preventDefault();
-    var $anchor = $($(this).attr("href")),
-      offsetAnchor = $anchor.offset().top;
+    const $anchor = $($(this).attr("href")),
+        offsetAnchor = $anchor.offset().top;
     $('html, body').animate({
       scrollTop: offsetAnchor
     }, 600);
@@ -3068,7 +3047,7 @@ $(document).ready(function () {
   });
 
   // client rating slider
-  var $sliderRating = $(".b-rating__slider .b-slider__string_rating").slick({
+  const $sliderRating = $(".b-rating__slider .b-slider__string_rating").slick({
     arrows: false,
     infinite: true,
     speed: 400,
@@ -3078,8 +3057,8 @@ $(document).ready(function () {
     // autoplaySpeed: 4400
   });
   // add my buttons to ads slider
-  var $sliderRatingPrevBtn = $sliderRating.parents(".b-rating__slider").find(".b-slider__control_left"),
-    $sliderRatingNextBtn = $sliderRating.parents(".b-rating__slider").find(".b-slider__control_right");
+  const $sliderRatingPrevBtn = $sliderRating.parents(".b-rating__slider").find(".b-slider__control_left"),
+      $sliderRatingNextBtn = $sliderRating.parents(".b-rating__slider").find(".b-slider__control_right");
   $sliderRatingPrevBtn.click(function (event) {
     event.preventDefault();
     $sliderRating.slick("slickPrev");
@@ -3090,8 +3069,8 @@ $(document).ready(function () {
   });
 
   // faq accordion
-  var $faq = $(".b-questAnsw"),
-    $faqHeading = $(".b-questAnsw li");
+  const $faq = $(".b-questAnsw"),
+      $faqHeading = $(".b-questAnsw li");
 
   $(".b-questAnsw:nth-child(n+2)").find("p").hide();
   $faqHeading.click(function () {
@@ -3105,10 +3084,9 @@ $(document).ready(function () {
   });
 
   // faq show more btn
-  var
-    $faqBtnMore = $(".js-btn_faqs"),
-    $faqBtnMoreArrow = $faqBtnMore.children(".fa"),
-    $faqHidden = $faq.filter(":nth-child(n+5)");
+  const $faqBtnMore = $(".js-btn_faqs"),
+      $faqBtnMoreArrow = $faqBtnMore.children(".fa"),
+      $faqHidden = $faq.filter(":nth-child(n+5)");
 
   $faqBtnMore.on("click", function () {
     $faqHidden.slideToggle(400);
@@ -3116,32 +3094,30 @@ $(document).ready(function () {
   });
 
   // responces slider
-  var responces = (function () {
-    var obj = {};
+  const responces = (function () {
+    const obj = {};
 
     obj.$section = $("#responses");
 
     obj.$slider = obj.$section.find(".b-slider_responses");
 
-    var $slideResp = obj.$slider.find(".b-slide_responses"),
-      $respFedbBtn = obj.$section.find(".js-btns_category"),
-      $responsesBtn = $respFedbBtn.children(".js-btn_responses"),
-      $feedbackBtn = $respFedbBtn.children(".js-btn_feedback"),
-      $sliderRespControlBtn = obj.$slider.find(".b-slider__control_responses"),
-      $sliderRespPrevBtn = obj.$slider.find(".b-slider__controls_responses .b-slider__control_left"),
-      $sliderRespNextBtn = obj.$slider.find(".b-slider__controls_responses .b-slider__control_right"),
-      $activeSlide = $slideResp.filter(".b-slide_active"),
-      $unactiveSlide = $slideResp.filter(":not(.b-slide_active)"),
-      $slidesContent = $("#slides").children() // знаходимо відгуки в прихованому блоці
-      ,
-      slidesArray = [] // масив з html відгуків
-      ,
-      responseNum // зберігає індекс останнього завантаженого відгуку
-      , bPrevNext // чи попередній напрямок запитів "Наступний слайд"
-      , widthSlideCss = $activeSlide.outerWidth() // initial width for desktop
-      ,
-      widthContainer, widthSlide, diff // widthContainer - widthSlide
-      , bSmallScr // true on large screens
+    const $slideResp = obj.$slider.find(".b-slide_responses"),
+        $respFedbBtn = obj.$section.find(".js-btns_category"),
+        $responsesBtn = $respFedbBtn.children(".js-btn_responses"),
+        $feedbackBtn = $respFedbBtn.children(".js-btn_feedback"),
+        $sliderRespControlBtn = obj.$slider.find(".b-slider__control_responses"),
+        $sliderRespPrevBtn = obj.$slider.find(".b-slider__controls_responses .b-slider__control_left"),
+        $sliderRespNextBtn = obj.$slider.find(".b-slider__controls_responses .b-slider__control_right");
+    let $activeSlide = $slideResp.filter(".b-slide_active"),
+        $unactiveSlide = $slideResp.filter(":not(.b-slide_active)");
+    const $slidesContent = $("#slides").children() // знаходимо відгуки в прихованому блоці
+        ,
+        slidesArray = [] // масив з html відгуків
+    ;let responseNum // зберігає індекс останнього завантаженого відгуку
+        , bPrevNext // чи попередній напрямок запитів "Наступний слайд"
+    ;const widthSlideCss = $activeSlide.outerWidth() // initial width for desktop
+    ;let widthContainer, widthSlide, diff // widthContainer - widthSlide
+        , bSmallScr // true on large screens
     ;
 
     obj.slidesInit = function () {
@@ -3164,171 +3140,161 @@ $(document).ready(function () {
     };
 
     var
-      activeSlidePosition = function () {
-        $activeSlide = $slideResp.filter(".b-slide_active");
-        $unactiveSlide = $slideResp.filter(":not(.b-slide_active)");
-        $unactiveSlide.css("top", "0px");
-        $unactiveSlide.css("left", "0px");
+        activeSlidePosition = function () {
+          $activeSlide = $slideResp.filter(".b-slide_active");
+          $unactiveSlide = $slideResp.filter(":not(.b-slide_active)");
+          $unactiveSlide.css("top", "0px");
+          $unactiveSlide.css("left", "0px");
 
-        widthContainer = obj.$slider.outerWidth();
-        widthSlide = $activeSlide.outerWidth();
+          widthContainer = obj.$slider.outerWidth();
+          widthSlide = $activeSlide.outerWidth();
 
-        if (widthContainer > widthSlideCss) {
-          if (widthSlide < widthSlideCss) {
-            $slideResp.css("width", widthSlideCss + "px")
-          }
-          bSmallScr = false;
-          $activeSlide.css("top", "30px");
-          diff = widthContainer - widthSlideCss;
-          $activeSlide.css("left", diff + "px");
-        }
-        else {
-          widthSlide = widthContainer;
-          $slideResp.css("width", widthContainer + "px")
-          bSmallScr = true;
-          // diff = 0;
-          $activeSlide.css("top", "10px");
-          $activeSlide.css("left", "5px");
-          $unactiveSlide.css("left", "-5px");
-        }
-
-      },
-      moveLeft = function ($slide, bNext, bSmallScr) {
-        $slide.animate({
-          top: bSmallScr ? 9 : 20,
-          left: bSmallScr ? 40 : diff * 1.1
-        }, {
-          duration: bSmallScr ? 100 : 200,
-          easing: "linear",
-          queue: "active", // черга для анімації цього слайда
-          done: function () {
-            $(this).css("z-index", "-1") // приберемо на задній фон
-          }
-        });
-        $slide.animate({
-          top: bSmallScr ? 7 : 5,
-          left: bSmallScr ? 30 : diff * 0.99
-        }, {
-          duration: bSmallScr ? 100 : 200,
-          easing: "linear",
-          queue: "active" // черга для анімації цього слайда
-        });
-        $slide.animate({
-          top: bSmallScr ? 5 : 2,
-          left: bSmallScr ? 15 : diff * 0.5
-        }, {
-          duration: bSmallScr ? 150 : 300,
-          easing: "linear",
-          queue: "active", // черга для анімації цього слайда
-          done: function () {
-            // завантажимо новий контент слайда
-            var $slideContent = $(this).find(".b-slide__side_front .b-slide__wrap");
-            $slideContent.fadeOut(100);
-            if (bNext) {
-              if (bPrevNext) {
-                // перевірка індекса масива перед інкрементом на 1
-                if (responseNum == slidesArray.length - 1) {
-                  responseNum = 0
-                }
-                else {
-                  ++responseNum;
-                }
-                $slideContent.html(slidesArray[responseNum]); // відмальовуєм відгук з індексом responseNum
-              }
-              else {
-                // перевірка індекса масива перед інкрементом на 2
-                if (responseNum == slidesArray.length - 1) {
-                  responseNum = 1
-                }
-                else if (responseNum == slidesArray.length - 2) {
-                  responseNum = 0;
-                }
-                else {
-                  responseNum += 2;
-                }
-                $slideContent.html(slidesArray[responseNum]);
-              }
-              bPrevNext = true;
+          if (widthContainer > widthSlideCss) {
+            if (widthSlide < widthSlideCss) {
+              $slideResp.css("width", widthSlideCss + "px")
             }
-            else {
-              if (!bPrevNext) {
-                // перевірка індекса масива перед декрементом на 1
-                if (responseNum == 0) {
-                  responseNum = slidesArray.length - 1
-                }
-                else {
-                  --responseNum;
-                }
-                $slideContent.html(slidesArray[responseNum]);
-              }
-              else {
-                // перевірка індекса масива перед декрементом на 2
-                if (responseNum == 1) {
-                  responseNum = slidesArray.length - 1
-                }
-                else if (responseNum == 0) {
-                  responseNum = slidesArray.length - 2
-                }
-                else {
-                  responseNum -= 2;
-                }
-                $slideContent.html(slidesArray[responseNum]);
-              }
-              bPrevNext = false;
-            }
+            bSmallScr = false;
+            $activeSlide.css("top", "30px");
+            diff = widthContainer - widthSlideCss;
+            $activeSlide.css("left", diff + "px");
+          } else {
+            widthSlide = widthContainer;
+            $slideResp.css("width", widthContainer + "px")
+            bSmallScr = true;
+            // diff = 0;
+            $activeSlide.css("top", "10px");
+            $activeSlide.css("left", "5px");
+            $unactiveSlide.css("left", "-5px");
+          }
 
-            $slideContent.fadeIn(100).promise().done(function () {
-              $(this).css('display', '');
-            });
-          }
-        });
-        $slide.animate({
-          top: bSmallScr ? 0 : 0,
-          left: -5
-        }, {
-          duration: bSmallScr ? 150 : 300,
-          easing: "linear",
-          queue: "active",
-          done: function () {
-            $slideResp.toggleClass("b-slide_active");
-          }
-        });
-        $slide.dequeue("active"); // запустимо чергу
-      },
-      moveRight = function ($slide, bSmallScr) {
-        $slide.animate({
-          top: bSmallScr ? 7 : 40,
-          left: bSmallScr ? -40 : -diff * 0.1
-        }, {
-          duration: bSmallScr ? 100 : 200,
-          easing: "linear",
-          queue: "unactive", // черга для анімації цього слайда
-          done: function () {
-            $(this).css("z-index", "4")
-          }
-        });
-        $slide.animate({
-          top: bSmallScr ? 9 : 60,
-          left: bSmallScr ? -30 : diff * 0.01
-        }, {
-          duration: bSmallScr ? 100 : 200,
-          easing: "linear",
-          queue: "unactive" // черга для анімації цього слайда
-        });
-        $slide.animate({
-          top: bSmallScr ? 10 : 30,
-          left: bSmallScr ? 5 : diff
-        }, {
-          duration: bSmallScr ? 300 : 600,
-          easing: "linear",
-          queue: "unactive"
-        });
-        $slide.dequeue("unactive"); // запустимо чергу
-      },
-      reshuffle = function ($active, $unActive, bNext) {
-        moveLeft($active, bNext, bSmallScr);
-        moveRight($unActive, bSmallScr);
-      };
+        },
+        moveLeft = function ($slide, bNext, bSmallScr) {
+          $slide.animate({
+            top: bSmallScr ? 9 : 20,
+            left: bSmallScr ? 40 : diff * 1.1
+          }, {
+            duration: bSmallScr ? 100 : 200,
+            easing: "linear",
+            queue: "active", // черга для анімації цього слайда
+            done: function () {
+              $(this).css("z-index", "-1") // приберемо на задній фон
+            }
+          });
+          $slide.animate({
+            top: bSmallScr ? 7 : 5,
+            left: bSmallScr ? 30 : diff * 0.99
+          }, {
+            duration: bSmallScr ? 100 : 200,
+            easing: "linear",
+            queue: "active" // черга для анімації цього слайда
+          });
+          $slide.animate({
+            top: bSmallScr ? 5 : 2,
+            left: bSmallScr ? 15 : diff * 0.5
+          }, {
+            duration: bSmallScr ? 150 : 300,
+            easing: "linear",
+            queue: "active", // черга для анімації цього слайда
+            done: function () {
+              // завантажимо новий контент слайда
+              const $slideContent = $(this).find(".b-slide__side_front .b-slide__wrap");
+              $slideContent.fadeOut(100);
+              if (bNext) {
+                if (bPrevNext) {
+                  // перевірка індекса масива перед інкрементом на 1
+                  if (responseNum == slidesArray.length - 1) {
+                    responseNum = 0
+                  } else {
+                    ++responseNum;
+                  }
+                  $slideContent.html(slidesArray[responseNum]); // відмальовуєм відгук з індексом responseNum
+                } else {
+                  // перевірка індекса масива перед інкрементом на 2
+                  if (responseNum == slidesArray.length - 1) {
+                    responseNum = 1
+                  } else if (responseNum == slidesArray.length - 2) {
+                    responseNum = 0;
+                  } else {
+                    responseNum += 2;
+                  }
+                  $slideContent.html(slidesArray[responseNum]);
+                }
+                bPrevNext = true;
+              } else {
+                if (!bPrevNext) {
+                  // перевірка індекса масива перед декрементом на 1
+                  if (responseNum == 0) {
+                    responseNum = slidesArray.length - 1
+                  } else {
+                    --responseNum;
+                  }
+                  $slideContent.html(slidesArray[responseNum]);
+                } else {
+                  // перевірка індекса масива перед декрементом на 2
+                  if (responseNum == 1) {
+                    responseNum = slidesArray.length - 1
+                  } else if (responseNum == 0) {
+                    responseNum = slidesArray.length - 2
+                  } else {
+                    responseNum -= 2;
+                  }
+                  $slideContent.html(slidesArray[responseNum]);
+                }
+                bPrevNext = false;
+              }
+
+              $slideContent.fadeIn(100).promise().done(function () {
+                $(this).css('display', '');
+              });
+            }
+          });
+          $slide.animate({
+            top: bSmallScr ? 0 : 0,
+            left: -5
+          }, {
+            duration: bSmallScr ? 150 : 300,
+            easing: "linear",
+            queue: "active",
+            done: function () {
+              $slideResp.toggleClass("b-slide_active");
+            }
+          });
+          $slide.dequeue("active"); // запустимо чергу
+        },
+        moveRight = function ($slide, bSmallScr) {
+          $slide.animate({
+            top: bSmallScr ? 7 : 40,
+            left: bSmallScr ? -40 : -diff * 0.1
+          }, {
+            duration: bSmallScr ? 100 : 200,
+            easing: "linear",
+            queue: "unactive", // черга для анімації цього слайда
+            done: function () {
+              $(this).css("z-index", "4")
+            }
+          });
+          $slide.animate({
+            top: bSmallScr ? 9 : 60,
+            left: bSmallScr ? -30 : diff * 0.01
+          }, {
+            duration: bSmallScr ? 100 : 200,
+            easing: "linear",
+            queue: "unactive" // черга для анімації цього слайда
+          });
+          $slide.animate({
+            top: bSmallScr ? 10 : 30,
+            left: bSmallScr ? 5 : diff
+          }, {
+            duration: bSmallScr ? 300 : 600,
+            easing: "linear",
+            queue: "unactive"
+          });
+          $slide.dequeue("unactive"); // запустимо чергу
+        },
+        reshuffle = function ($active, $unActive, bNext) {
+          moveLeft($active, bNext, bSmallScr);
+          moveRight($unActive, bSmallScr);
+        };
 
     obj.sliderInit = function () {
       $responsesBtn.click(function () {
@@ -3384,14 +3350,14 @@ $(document).ready(function () {
   })();
 
   // rating stars module
-  var stars = (function () {
-    var obj = {};
+  const stars = (function () {
+    const obj = {};
 
     obj.fillStar = function () { // ф-я для зафарбовування зірочок для кожного контейнера $("РейтингКонтейнер").each(fillStar)
-      var starsNum = $(this).attr("data-rating") // к-ть зірочок для зафарбування в атрибуті "data-rating" контейнера
-        ,
-        $stars = $(this).children("span.fa"),
-        i;
+      const starsNum = $(this).attr("data-rating") // к-ть зірочок для зафарбування в атрибуті "data-rating" контейнера
+          ,
+          $stars = $(this).children("span.fa");
+      let i;
       // 	fa-star-o контур зірочки
       // 	fa-star зафарбований контур зірочки
       for (i = 0; i < starsNum; ++i) {
@@ -3400,7 +3366,7 @@ $(document).ready(function () {
     };
 
     obj.fillAllStars = function (sSelector) { // sSelector - селектор контейнера із зрочками
-      var $ratings = $(sSelector); // контейнер із зірочками
+      const $ratings = $(sSelector); // контейнер із зірочками
       $ratings.each(function () {
         obj.fillStar.call(this)
       }); // add context from each f-n
@@ -3420,7 +3386,7 @@ $(document).ready(function () {
   $(".js-form_feedback").submit(function (event) {
     event.preventDefault();
     // place for Ajax sending
-    var data = $(this).serialize();
+    const data = $(this).serialize();
     $.ajax({
       // type : 'post',
       type: 'post',
@@ -3460,10 +3426,10 @@ $(document).ready(function () {
     $modalNewsletter = $modals.filter("#b-modal_newsletterbg"),
     $modalPromocode = $modals.filter("#b-modal_promocodebg");
 
-  var hideModals = function () { // hide modals function
+  const hideModals = function () { // hide modals function
     $modalOvl.fadeOut();
     $modals.fadeOut();
-  }
+  };
 
   $("#callbackBtn, #callbackBtn_footer, .js-btn_callback").click(function () {
     $modalOvl.fadeIn();
@@ -3555,8 +3521,8 @@ $(document).ready(function () {
   // scroll to top
   $("#toTop").click(function () {
     // event.preventDefault();
-    var $anchor = $($(this).find(".b-btn_toTop").attr("href")),
-      offsetAnchor = $anchor.offset().top;
+    const $anchor = $($(this).find(".b-btn_toTop").attr("href")),
+        offsetAnchor = $anchor.offset().top;
     $('html, body').animate({
       scrollTop: offsetAnchor
     }, 400);
@@ -3630,8 +3596,8 @@ $(document).ready(function () {
 
 
   // adaptive iframe video
-  var iframeAspectRatio = (function () {
-    var obj = {};
+  const iframeAspectRatio = (function () {
+    const obj = {};
 
     obj.iframesAll = $("iframe");
 
@@ -3644,9 +3610,9 @@ $(document).ready(function () {
     obj.aspectRatio = function ($el, FcallBack) {
       // save aspect ratio
       $el.attr("data-ratio", $el.attr('height') / $el.attr('width'))
-        // and remove the hard coded width/height
-        .removeAttr('height')
-        .removeAttr('width');
+          // and remove the hard coded width/height
+          .removeAttr('height')
+          .removeAttr('width');
       if (typeof (FcallBack) == "function") {
         FcallBack(arguments[0]);
       }
@@ -3654,7 +3620,7 @@ $(document).ready(function () {
 
     obj.init = function (sSelector) {
       obj.iframesAll.filter(sSelector).each(function () {
-        var $this = $(this);
+        const $this = $(this);
         obj.aspectRatio($this, obj.calcHeight);
       });
     }
@@ -3663,8 +3629,8 @@ $(document).ready(function () {
   })();
 
   // footer module
-  var footer = (function () {
-    var obj = {}; // module returned object
+  const footer = (function () {
+    const obj = {}; // module returned object
 
     // mobile Footer accordion
     obj.$accordionTriggers = $("footer").find(".js-accordion__trigger");
@@ -3672,8 +3638,8 @@ $(document).ready(function () {
 
     obj.mobileAccordion = function () {
       obj.$accordionTriggers.on("click", function () {
-        var $trigger = $(this),
-          $content = $trigger.siblings(".js-accordion__content");
+        const $trigger = $(this),
+            $content = $trigger.siblings(".js-accordion__content");
         // close all opened accordion items except of clicked
         obj.$accordionContents.each(function () {
           if (($(this)[0] !== $content[0]) && ($(this).parent().hasClass("opened"))) {
@@ -3778,7 +3744,7 @@ $(document).ready(function () {
 
   })();*/
   (function () {
-    var $window = $(window);
+    const $window = $(window);
     $('.js-footer-title').on('click', function (event) {
       event.preventDefault();
       if ($window.width() > 768) return false;
