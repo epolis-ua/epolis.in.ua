@@ -1,4 +1,7 @@
 <?php
+
+use Random\RandomException;
+
 require_once("eua_connect.php");
 global $headers;
 global $salepoint;
@@ -91,7 +94,7 @@ if (!empty($number)) {
 			</div>
 		</div>
 	';
-	exit(404);
+	exit(254);
   }
 } else {
   $autocat = $categ[$_GET["type"]];
@@ -136,7 +139,7 @@ foreach ($tariffs as $propos => $tariff_item){
   if ($n_percent < $m_percent) continue;
   $price = $fullprice;
   $discount = 0;  
-  $fullname = htmlspecialchars($tariff_item['tariff']['insurer']['namePrint']);
+  $fullname = htmlspecialchars($tariff_item['tariff']['insurer']['namePrint'], ENT_QUOTES | ENT_HTML5);
   $name = $tariff_item['tariff']['insurer']['name'];
   if ($price < 1000) {
     $pad_l = 50;
@@ -181,8 +184,11 @@ echo '<div class="b-calculator_propos" id="propositions">
 $t_data = null;
 foreach ($tariff_data as $t_data) {
   list($tariff_id, $fullprice, $price, $fullname, $name,  $img, $discount, $pad_l) = array_values($t_data);
-  $pos_right = strval(rand(0, 9));
-  echo '  <div class="js-proposition t594__item t594__item_4-in-row">
+    try {
+        $pos_right = (string)random_int(0, 9);
+    } catch (RandomException $e) {
+    }
+    echo '  <div class="js-proposition t594__item t594__item_4-in-row">
             <div class="b-proposition_row js-proposition__buy" data-name="' . $name . '" data-tariff-id="' . $tariff_id  . '" price="' . $price  . '">
               <div class="b-container__filter b-proposition__company">
                 <img src="' . $img . '" title="' . $fullname . '" class="b-img_company">

@@ -365,7 +365,7 @@ $CityName = explode( ",", $_POST[ "CityName" ] )[ 0 ];
           <tr>
             <td height="4"><?php echo $CityName; ?></td>
             <td><?php echo $priv[$_POST["Priv"]]; ?></td>
-            <td><?php echo htmlspecialchars($_POST["Name"]); ?></td>
+            <td><?php echo htmlspecialchars($_POST["Name"], ENT_QUOTES | ENT_HTML5); ?></td>
           </tr>
         </tbody>
       </table>

@@ -2,7 +2,7 @@
 require_once("db_connect.php");
 global $db;
 $json_data = array();
-$item = $_GET["item"];
+if (!empty($_GET)) $item = $_GET["item"];
 $query = "select nameFull, id, zone from places where name like '$item%'";
 $stmt = mysqli_prepare($db, $query);
 mysqli_stmt_execute($stmt);

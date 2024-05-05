@@ -910,7 +910,9 @@ class MobileDetect
         //Test both the regular and the HTTP_ prefix
         if (isset($this->httpHeaders[$header])) {
             return $this->httpHeaders[$header];
-        } elseif (isset($this->httpHeaders[$altHeader])) {
+        }
+
+        if (isset($this->httpHeaders[$altHeader])) {
             return $this->httpHeaders[$altHeader];
         }
 
@@ -999,18 +1001,18 @@ class MobileDetect
 
         if (false === empty($userAgent)) {
             return $this->userAgent = $this->prepareUserAgent($userAgent);
-        } else {
-            $this->userAgent = null;
-            foreach ($this->getUaHttpHeaders() as $altHeader) {
-                // @todo: should use getHttpHeader(), but it would be slow. (Serban)
-                if (false === empty($this->httpHeaders[$altHeader])) {
-                    $this->userAgent .= $this->httpHeaders[$altHeader] . " ";
-                }
-            }
+        }
 
-            if (!empty($this->userAgent)) {
-                return $this->userAgent = $this->prepareUserAgent($this->userAgent);
+        $this->userAgent = null;
+        foreach ($this->getUaHttpHeaders() as $altHeader) {
+            // @todo: should use getHttpHeader(), but it would be slow. (Serban)
+            if (false === empty($this->httpHeaders[$altHeader])) {
+                $this->userAgent .= $this->httpHeaders[$altHeader] . " ";
             }
+        }
+
+        if (!empty($this->userAgent)) {
+            return $this->userAgent = $this->prepareUserAgent($this->userAgent);
         }
 
         if (count($this->getCfHeaders()) > 0) {
@@ -1124,16 +1126,14 @@ class MobileDetect
         foreach ($this->getMobileHeaders() as $mobileHeader => $matchType) {
             if (isset($this->httpHeaders[$mobileHeader])) {
                 if (isset($matchType['matches']) && is_array($matchType['matches'])) {
-                    foreach ($matchType['matches'] as $_match) {
-                        if (strpos($this->httpHeaders[$mobileHeader], $_match) !== false) {
-                            return true;
-                        }
+                    foreach ($matchType['matches'] as $_match) if (strpos($this->httpHeaders[$mobileHeader], $_match) !== false) {
+                        return true;
                     }
 
                     return false;
-                } else {
-                    return true;
                 }
+
+                return true;
             }
         }
 
@@ -1242,9 +1242,9 @@ class MobileDetect
 
         if ($this->checkHttpHeadersForMobile()) {
             return true;
-        } else {
-            return $this->matchDetectionRulesAgainstUA();
         }
+
+        return $this->matchDetectionRulesAgainstUA();
     }
 
     /**
