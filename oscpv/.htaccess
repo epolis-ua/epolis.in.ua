@@ -1,0 +1,10 @@
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*?)/?$ $1.php [NC,L]
+RewriteRule "^/?assets/images/thumb/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+/[^/]+)/(.*)" "/assets/images/static/$1/$9" [L,PT]
+RewriteRule "^/?assets/images/thumb/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)" "/assets/images/static/$1/$8" [L,PT]
+RewriteRule "^/?assets/images/thumb/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)" "/assets/images/static/$1/$5" [PT]
+Header set Cache-Control "no-cache, no-store, must-revalidate"
+Header set Pragma "no-cache"
+Header set Expires 0
+Header always set Content-type "image/png" "expr=%{THE_REQUEST} =~ /empty/"
+Options All -Indexes
