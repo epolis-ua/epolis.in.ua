@@ -75,7 +75,6 @@ require_once "../assets/libs/MobileDetect.php";
     <link href="assets/css/menusub-1.0.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="assets/css/font-awesome.css?v=3.2.1" rel="stylesheet" type="text/css" media="all"/>
     <link href="assets/css/normalize.css" rel="stylesheet" type="text/css" media="all"/>
-<!--	<link href="assets/css/selectric.css?v=1.0.1" rel="stylesheet" type="text/css" media="all"/>-->
     <link href="assets/css/jquery.auto-complete.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="assets/css/default.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="assets/css/default.date.css" rel="stylesheet" type="text/css" media="all"/>
