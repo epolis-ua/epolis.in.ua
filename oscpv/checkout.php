@@ -103,7 +103,7 @@ $CityName = explode( ",", $_POST[ "CityName" ] )[ 0 ];
 	text-align: left;
 }
 </style>
-<script src="assets/js/jquery-1.10.2.js"></script>
+<script src="../assets/js/jquery.js"></script>
 <!--
       <script type="text/javascript">
       document.ondragstart = noselect;

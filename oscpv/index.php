@@ -82,14 +82,15 @@ require_once "../assets/libs/MobileDetect.php";
     <link href="assets/css/ion.rangeSlider.skin.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="assets/css/styles.css?v=1.8.2" rel="stylesheet" type="text/css" media="all"/>
 
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/scripts.js"></script>
+    <script src="../assets/js/blocks.js"></script>
+    <script src="../assets/js/lazyload.js"></script>
+    <script src="../assets/js/forms.js"></script>
+
     <script src="assets/js/unpriv.js"></script>
-    <script src="assets/js/jquery-1.10.2.js?v=1.10.6"></script>
-    <script src="../assets/js/scripts-2.8.js"></script>
-    <script src="../assets/js/blocks-2.8.js"></script>
-    <script src="assets/js/lazyload-1.5.js"></script>
-    <script src="assets/js/animation-1.0.js"></script>
-    <script src="assets/js/forms-1.0.js"></script>
-    
+
+    <script src="assets/js/animation.js"></script>
     <script src="assets/js/jquery.maskedinput.min.js"></script>
     <script src="assets/js/jquery.newmaskedinput.min.js"></script>
     <script src="assets/js/jquery.selectric.min.js"></script>
@@ -102,7 +103,8 @@ require_once "../assets/libs/MobileDetect.php";
     <script src="assets/js/picker.date.js"></script>
     <script src="assets/js/pickaday_rus.js"></script>
     <script src="assets/js/ion.rangeSlider.min.js"></script>
-    <script src="assets/js/ep-calc.js?n=1.4.1"></script>
+
+    <script src="assets/js/ep-calc.js"></script>
 
     <!--
       <script type="text/javascript">
@@ -399,7 +401,7 @@ require_once "../assets/libs/MobileDetect.php";
                     <input type="radio" class="radio sr-only" id="few" value="10" name="type"/>
                     <label for="few">до 20 осіб</label>
                     <input type="radio" class="radio sr-only" id="many" value="11" name="type"/>
-                    <label for="many">більше 20 осіб</label>
+                    <label for="many">понад 20 осіб</label>
                   </div>
                   <div class="b-params b-params_moto">
                     <span class="b-calculator__heading_registration">
@@ -408,7 +410,7 @@ require_once "../assets/libs/MobileDetect.php";
                     <input type="radio" class="radio sr-only" id="motorbike" value="1" name="type"/>
                     <label for="motorbike">до 300 см<sup>3</sup></label>
                     <input type="radio" class="radio sr-only" id="motorcycle" value="2" name="type"/>
-                    <label for="motorcycle">більше 300 см<sup>3</sup></label>
+                    <label for="motorcycle">понад 300 см<sup>3</sup></label>
                   </div>
                   <div class="b-params b-params_trailer">
                     <span class="b-calculator__heading_registration">
@@ -429,9 +431,9 @@ require_once "../assets/libs/MobileDetect.php";
                     <option value="6">Легковий а/м, від 3001 см&#179</option>
                     <option value="7">Електромобіль</option>
                     <option value="8">Вантажний а/м, до 2т</option>
-                    <option value="9">Вантажний а/м, більше 2т</option>
+                    <option value="9">Вантажний а/м, понад 2т</option>
                     <option value="10">Пасажирський автобус, до 20 осіб</option>
-                    <option value="11">Пасажирський автобус, більше 20 осіб</option>
+                    <option value="11">Пасажирський автобус, понад 20 осіб</option>
                     <option value="1">Мотоцикл / моторолер, до 300 см&#179</option>
                     <option value="2">Мотоцикл / моторолер, від 300 см&#179</option>
                     <option value="12">Причіп до легкового авто</option>
