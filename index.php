@@ -9,7 +9,6 @@ require_once "assets/libs/MobileDetect.php";
 <html lang="UA">
     <head>
         <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-7VL78TN49N"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -22,7 +21,7 @@ require_once "assets/libs/MobileDetect.php";
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
         <!--metatextblock-->
         <title>Сервіс продажу електронних страхових полісів</title>
-        <meta name="keywords" content="Онлайн, онлайн, Страхование, страхование, Страхування, страхування, Електронний, електронний, Электронный, электронный, Поліс, поліс, ОСАГО, ОСЦПВ, Автоцивілка, автоцивілка, Автогражданка, автогражданка, Европротокол, европротокол, КАСКО, Зеленая карта, зеленая карта, Зелена карта, зелена карта, Туристическое, туристическое, Турістичне, турістичне, Медицинское, медицинское, Медичне, медичне, Имущество, имущество, Майно, майно, ДГО, ДЦВ"/>
+        <meta name="keywords" content="Онлайн, онлайн, Страхование, страхование, Страхування, страхування, Електронний, електронний, Электронный, электронный, Поліс, поліс, ОСАГО, ОСЦПВ, Автоцивілка, автоцивілка, Автогражданка, автогражданка, Европротокол, европротокол, Зеленая карта, зеленая карта, Зелена карта, зелена карта"/>
         <meta name="description" content="Онлайн страхування"/>
         <meta property="og:url" content="https://epolis.in.ua"/>
         <meta property="og:title" content="Сервіс продажу електронних страхових полісів"/>
