@@ -2339,7 +2339,7 @@ a.b-menu__item_callback {
     padding: 0 10px;
     font-size: 16px;
     line-height: 30px;
-    color: #1aaa89;
+    /*color: #1aaa89;*/
     font-weight: 700;
     height: 31px;
 }
@@ -10378,7 +10378,7 @@ a.b-callback_footer:hover {
     font-size: 16px;
     font-weight: 700;
     line-height: 30px;
-    color: #1aaa89;
+    /*color: #1aaa89;*/
     height: 31px;
     width: 260px;
     text-align: center;
