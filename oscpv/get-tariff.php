@@ -1,6 +1,5 @@
 <?php
-
-use Random\RandomException;
+/** @noinspection GlobalVariableUsageInspection */
 
 require_once("eua_connect.php");
 global $headers;
@@ -22,25 +21,22 @@ $categ = array(
   "12" => "E",
   "13" => "F"
 );
+$autocat = "1";
+$outua = "0";
+
 $regplace = $_GET["city"];
 $franch = $_GET["franshiza"];
 $priv = $_GET["priv"];
 $number = $_GET["number"];
+
 if (!empty($number)) {
   $url = "https://web.eua.in.ua/eua/api/v15/auto/mtibu/number?query=" . urlencode($number);
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $url);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-  $out = curl_exec($ch);
-  curl_close($ch);
-  $auto = json_decode($out, true);
+  $auto = replyEUA($url, $headers);
   if (count($auto)) {
     $autocat = $auto[0]["category"];
 	$automodel = $auto[0]["modelText"];
 	$autovin = $auto[0]["bodyNumber"];
 	$autoyear = $auto[0]["year"];
-    $outua = false;
 	echo '
 		<div class="vehicle-info-wrapper b-container__calculator_vehicle">
 			<div class="b-calculator_vehicle">
@@ -94,27 +90,21 @@ if (!empty($number)) {
 			</div>
 		</div>
 	';
-	exit(254);
+
   }
 } else {
   $autocat = $categ[$_GET["type"]];
   $outua = $_GET["registeredAbroad"];
 }
 
-if ($outua == "1") {
+if ($outua === "1") {
   $url = "https://web.eua.in.ua/eua/api/v15/tariff/choose/policy?autoCategory=" . $autocat . "&franchise=" . $franch . "&outsideUkraine=true&customerCategory=NATURAL&dateFrom=" . $startdt . "&dateTo=" . $enddt . "&usageMonths=0&taxi=false&crossSell=false&salePoint=" . $salepoint;
-} elseif ($priv == "1") {
+} elseif ($priv === "1") {
   $url = "https://web.eua.in.ua/eua/api/v15/tariff/choose/policy?autoCategory=" . $autocat . "&registrationPlace=" . $regplace . "&franchise=" . $franch . "&customerCategory=PRIVILEGED&dateFrom=" . $startdt . "&dateTo=" . $enddt . "&usageMonths=0&taxi=false&crossSell=false&salePoint=" . $salepoint;
 } else {
   $url = "https://web.eua.in.ua/eua/api/v15/tariff/choose/policy?autoCategory=" . $autocat . "&registrationPlace=" . $regplace . "&franchise=" . $franch . "&customerCategory=NATURAL&dateFrom=" . $startdt . "&dateTo=" . $enddt . "&usageMonths=0&taxi=false&crossSell=false&salePoint=" . $salepoint;
 }
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-$out = curl_exec($ch);
-curl_close($ch);
-$tariffs = json_decode($out, true);
+$tariffs = replyEUA($url, $headers);
 $hard = 0.75;
 $m_percent = 0.15;
 $t_data = array();
@@ -123,9 +113,13 @@ $reduced_tariff = array();
 $i = 0;
 foreach ($tariffs as $propos => $tariff_item){
   $pmt = $tariff_item['payment'];
-  if ($pmt == 0) continue;
+  if ($pmt === 0) {
+    continue;
+  }
   $edrpou = $tariff_item['tariff']['insurer']['code'];
-  if ($edrpou == "12345678") continue;
+  if ($edrpou === "12345678") {
+    continue;
+  }
   $insur_id = $tariff_item['tariff']['insurer']['id'];
   $img = 'assets/logos/' . $edrpou . '.png';
   $tariff_id = $tariff_item['tariff']['id'];
@@ -136,7 +130,9 @@ foreach ($tariffs as $propos => $tariff_item){
   $n_comis = round($comis - (0.03 * $pmt + 0.05 * $comis), 2);
   $percent = round($comis / $fullprice, 2);
   $n_percent = round($n_comis / $fullprice, 2);
-  if ($n_percent < $m_percent) continue;
+  if ($n_percent < $m_percent) {
+    continue;
+  }
   $price = $fullprice;
   $discount = 0;  
   $fullname = htmlspecialchars($tariff_item['tariff']['insurer']['namePrint'], ENT_QUOTES | ENT_HTML5);
@@ -161,7 +157,9 @@ foreach ($insur_ids as $insur_id) {
   $i = 0;
   foreach ($tariff_data as $subarray) {
     if (isset($subarray[$searchKey]) && $subarray[$searchKey] === $searchValue) {
-      if ($i ==0) $t_data[] = $subarray;
+      if ($i === 0) {
+        $t_data[] = $subarray;
+      }
       $t_data[0]['price'] = round($t_data[0]['n_pmt'] + $subarray['comis']);
 	  $i++;
     }
@@ -171,7 +169,7 @@ foreach ($insur_ids as $insur_id) {
 $t_data = null;
 $tariff_data = null;
 foreach ($reduced_tariff as $t_data) {
-  if ($t_data[0]['price'] == $t_data[0]['fullprice']) {
+  if ($t_data[0]['price'] === $t_data[0]['fullprice']) {
 	$t_data[0]['price'] = round($t_data[0]['n_pmt'] + $hard * $t_data[0]['n_comis']);
   }
   $t_data[0]['discount'] = round(1 - ($t_data[0]['price'] / $t_data[0]['fullprice']),2) * 100;
@@ -183,12 +181,10 @@ echo '<div class="b-calculator_propos" id="propositions">
         <div class="t594__container t-container">'; 
 $t_data = null;
 foreach ($tariff_data as $t_data) {
-  list($tariff_id, $fullprice, $price, $fullname, $name,  $img, $discount, $pad_l) = array_values($t_data);
-    try {
-        $pos_right = (string)random_int(0, 9);
-    } catch (RandomException $e) {
-    }
-    echo '  <div class="js-proposition t594__item t594__item_4-in-row">
+  [$tariff_id, $fullprice, $price, $fullname, $name, $img, $discount, $pad_l] = array_values($t_data);
+  $pos_right = (string)rand(0, 9);
+  echo /** @lang text */
+        '  <div class="js-proposition t594__item t594__item_4-in-row">
             <div class="b-proposition_row js-proposition__buy" data-name="' . $name . '" data-tariff-id="' . $tariff_id  . '" price="' . $price  . '">
               <div class="b-container__filter b-proposition__company">
                 <img src="' . $img . '" title="' . $fullname . '" class="b-img_company">
@@ -223,6 +219,6 @@ foreach ($tariff_data as $t_data) {
               </div>
           </div>';
 }
-echo '    	</div>
+echo '    	
+    </div>
   </div>';
-?>
