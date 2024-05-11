@@ -81,7 +81,8 @@ require_once "../assets/libs/MobileDetect.php";
     <link href="assets/css/ion.rangeSlider.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="assets/css/ion.rangeSlider.skin.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="assets/css/styles.css?v=1.8.2" rel="stylesheet" type="text/css" media="all"/>
-
+    <link href="assets/css/selectric.css?v=1.0.1" rel="stylesheet" type="text/css" media="all"/>
+	  
     <script src="../assets/js/jquery.js"></script>
     <script src="../assets/js/scripts.js"></script>
     <script src="../assets/js/blocks.js"></script>
