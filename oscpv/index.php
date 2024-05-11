@@ -89,7 +89,7 @@ require_once "../assets/libs/MobileDetect.php";
 
     <script src="assets/js/unpriv.js"></script>
 
-    <script src="assets/js/animation.js"></script>
+    <script src="assets/js/animation-1.0.js"></script>
     <script src="assets/js/jquery.maskedinput.min.js"></script>
     <script src="assets/js/jquery.newmaskedinput.min.js"></script>
     <script src="assets/js/jquery.selectric.min.js"></script>
