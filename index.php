@@ -38,7 +38,7 @@ require_once "assets/libs/MobileDetect.php";
         <!--metatextblock-->
         <!-- Assets -->
 		<link rel="stylesheet" href="assets/css/grid.css" type="text/css" media="all"/>
-		<link rel="stylesheet" href="assets/css/blocks.css?v1.0.2" type="text/css" media="all"/>
+		<link rel="stylesheet" href="assets/css/blocks.css" type="text/css" media="all"/>
 		<link rel="stylesheet" href="assets/css/animation.css" type="text/css" media="all"/>
         <script src="assets/js/jquery.js"></script>
         <script src="assets/js/blocks.js"></script>

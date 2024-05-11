@@ -88,6 +88,12 @@ require_once "../assets/libs/MobileDetect.php";
     <script src="../assets/js/lazyload.js"></script>
     <script src="../assets/js/forms.js"></script>
 
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/scripts.js"></script>
+    <script src="../assets/js/blocks.js"></script>
+    <script src="../assets/js/lazyload.js"></script>
+    <script src="../assets/js/forms.js"></script>
+
     <script src="assets/js/unpriv.js"></script>
 
     <script src="assets/js/animation.js"></script>
