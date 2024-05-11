@@ -41,10 +41,10 @@ require_once "assets/libs/MobileDetect.php";
 		<link rel="stylesheet" href="assets/css/blocks.css" type="text/css" media="all"/>
 		<link rel="stylesheet" href="assets/css/animation.css" type="text/css" media="all"/>
         <script src="assets/js/jquery.js"></script>
-        <script src="assets/js/blocks.js"></script>
+        <script src="assets/js/blocks-2.8.js"></script>
         <script src="assets/js/lazyload.js" charset="utf-8"></script>
-        <script src="assets/js/scripts.js"></script>
-        <script src="assets/js/forms.js" charset="utf-8"></script>
+        <script src="assets/js/scripts-2.8.js"></script>
+        <script src="assets/js/forms-1.0.js" charset="utf-8"></script>
         <script type="text/javascript">
             window.dataLayer = window.dataLayer || [];
         </script>
