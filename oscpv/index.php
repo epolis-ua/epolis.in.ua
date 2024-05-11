@@ -82,10 +82,10 @@ require_once "../assets/libs/MobileDetect.php";
     <link href="assets/css/styles.css?v=1.8.2" rel="stylesheet" type="text/css" media="all"/>
 
     <script src="../assets/js/jquery.js"></script>
-    <script src="../assets/js/scripts.js"></script>
-    <script src="../assets/js/blocks.js"></script>
+    <script src="../assets/js/scripts-2.8.js"></script>
+    <script src="../assets/js/blocks-2.8.js"></script>
     <script src="../assets/js/lazyload.js"></script>
-    <script src="../assets/js/forms.js"></script>
+    <script src="../assets/js/forms-1.0.js"></script>
 
     <script src="assets/js/unpriv.js"></script>
 
