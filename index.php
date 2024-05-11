@@ -1,14 +1,12 @@
 <?php
+  use Detection\MobileDetect;
+  require_once "assets/libs/MobileDetect.php";
+  $detect = new MobileDetect;
+?>
 
-use Detection\MobileDetect;
-
-require_once "assets/libs/MobileDetect.php";
-    $detect = new MobileDetect;
-    ?>
 <!DOCTYPE html>
 <html lang="UA">
     <head>
-        <!-- Global site tag (gtag.js) - Google Analytics -->
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
