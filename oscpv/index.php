@@ -9,7 +9,6 @@ require_once "../assets/libs/MobileDetect.php";
 <html lang="UA">
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7VL78TN49N"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
