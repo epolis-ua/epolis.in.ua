@@ -80,7 +80,7 @@ require_once "../assets/libs/MobileDetect.php";
     <link href="assets/css/default.date.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="assets/css/ion.rangeSlider.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="assets/css/ion.rangeSlider.skin.css" rel="stylesheet" type="text/css" media="all"/>
-    <link href="assets/css/styles.css?v=1.8.2" rel="stylesheet" type="text/css" media="all"/>
+    <link href="assets/css/styles.css" rel="stylesheet" type="text/css" media="all"/>
 
     <script src="../assets/js/jquery.js"></script>
     <script src="../assets/js/scripts.js"></script>
